@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="white">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Iniciar Sesión - IQ Option</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* RESET COMPLETO - ESTILO FACEBOOK MOBILE EXCLUSIVO */
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+        }
+
+        html {
+            background: #f0f2f5 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+        }
+
+        body {
+            background: #f0f2f5 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            width: 100vw !important;
+            overflow: hidden !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+            color: #1c1e21 !important;
+            font-size: 14px !important;
+            line-height: 1.34 !important;
+            position: relative !important;
+        }
+
+        .login-container {
+            background: #f0f2f5 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+            margin: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            height: 100vh !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            padding: 0 !important;
+            padding-bottom: 140px !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+
+        .login-header {
+            background: none !important;
+            padding: 30px 0 0 0 !important;
+            margin: 0 !important;
+            text-align: center !important;
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: flex-start !important;
+            align-items: center !important;
+            position: relative !important;
+            overflow: visible !important;
+            flex-shrink: 0 !important;
+        }
+
+        .logo-container {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100% !important;
+            padding: 5px 0 !important;
+            flex-shrink: 0 !important;
+        }
+
+        .logo-container img {
+            width: 140px !important;
+            height: auto !important;
+            display: block !important;
+            flex-shrink: 0 !important;
+        }
+
+        .form-container {
+            padding: 0 24px 20px 24px !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            width: 100% !important;
+            max-width: 374px !important;
+            margin: 0 auto !important;
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            box-sizing: border-box !important;
+            position: relative !important;
+        }
+
+        .form-group {
+            margin-bottom: 8px !important;
+            position: relative !important;
+        }
+
+        .form-input,
+        .form-control {
+            background: #ffffff !important;
+            border: 1px solid #dddfe2 !important;
+            border-radius: 6px !important;
+            padding: 12px 40px 12px 16px !important;
+            font-size: 16px !important;
+            color: #1c1e21 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .form-input:focus,
+        .form-control:focus {
+            background: white !important;
+            border-color: #1877f2 !important;
+            box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2) !important;
+            outline: none !important;
+        }
+
+        .form-input::placeholder,
+        .form-control::placeholder {
+            color: #8a8d91 !important;
+            font-size: 16px !important;
+        }
+
+        @keyframes shake {
+
+            0%,
+            20%,
+            40%,
+            60%,
+            80%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus+.input-icon {
+            color: #4CAF50;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .password-toggle::before {
+            content: "";
+            width: 20px;
+            height: 20px;
+            background-color: #000;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z'/%3E%3C/svg%3E") center/contain no-repeat;
+            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z'/%3E%3C/svg%3E") center/contain no-repeat;
+        }
+
+        .password-toggle.show-password::before {
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z'/%3E%3C/svg%3E") center/contain no-repeat;
+            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z'/%3E%3C/svg%3E") center/contain no-repeat;
+        }
+
+        .password-toggle:hover::before {
+            background-color: #333;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .login-btn:hover::before {
+            left: 100%;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(76, 175, 80, 0.3);
+        }
+
+        .remember-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .custom-checkbox {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .custom-checkbox input {
+            display: none;
+        }
+
+        .checkmark {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .custom-checkbox input:checked+.checkmark {
+            background: #000000;
+            border-color: #000000;
+        }
+
+        .custom-checkbox input:checked+.checkmark::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: white;
+            font-size: 12px;
+        }
+
+        .forgot-link {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-link:hover {
+            color: #2E7D32;
+            text-decoration: underline;
+        }
+
+        .alert-custom {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: #dc3545;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: floatAnimation 6s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes floatAnimation {
+
+            0%,
+            100% {
+                transform: translateY(0px) scale(1);
+            }
+
+            50% {
+                transform: translateY(-20px) scale(1.1);
+            }
+        }
+
+        /* CSS PARA MÓVIL - FACEBOOK STYLE */
+        @media (max-width: 768px) {
+
+            /* Reset completo */
+            * {
+                box-sizing: border-box;
+            }
+
+            html {
+                background: #f0f2f5 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                height: 100% !important;
+                width: 100% !important;
+            }
+
+            /* Eliminación agresiva de pseudo-elementos de escritorio */
+            *::before,
+            *::after,
+            .login-header::before,
+            .login-header::after,
+            .login-container::before,
+            .login-container::after,
+            .login-btn::before,
+            .login-btn::after {
+                display: none !important;
+                content: none !important;
+                animation: none !important;
+                transform: none !important;
+            }
+
+            body {
+                background: #f0f2f5 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                width: 100vw !important;
+                overflow: hidden !important;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+                display: block !important;
+                align-items: unset !important;
+                justify-content: unset !important;
+                position: relative !important;
+            }
+
+            .floating-shapes {
+                display: none !important;
+            }
+
+            .login-container {
+                background: #f0f2f5 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                height: 100vh !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+                padding: 0 !important;
+                padding-bottom: 140px !important;
+                position: relative !important;
+                overflow: hidden !important;
+                backdrop-filter: none !important;
+            }
+
+            .login-container:hover {
+                transform: none !important;
+                box-shadow: none !important;
+            }
+
+            .login-header {
+                background: none !important;
+                padding: 30px 0 0 0 !important;
+                margin: 0 !important;
+                text-align: center !important;
+                width: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: flex-start !important;
+                align-items: center !important;
+                position: relative !important;
+                overflow: visible !important;
+                flex-shrink: 0 !important;
+            }
+
+            /* Estilos del logo para móvil */
+            .logo-container {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 100% !important;
+                padding: 5px 0 !important;
+                flex-shrink: 0 !important;
+            }
+
+            .logo-container img {
+                width: 140px !important;
+                height: auto !important;
+                display: block !important;
+                flex-shrink: 0 !important;
+            }
+
+            .login-title,
+            .login-subtitle {
+                display: none !important;
+            }
+
+            .form-container {
+                padding: 0 24px 20px 24px !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                width: 100% !important;
+                max-width: 374px !important;
+                margin: 0 auto !important;
+                flex: 1 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                box-sizing: border-box !important;
+                position: relative !important;
+            }
+
+            .form-group {
+                margin-bottom: 8px !important;
+                position: relative !important;
+            }
+
+            .form-input,
+            .form-control {
+                background: #ffffff !important;
+                border: 1px solid #dddfe2 !important;
+                border-radius: 6px !important;
+                padding: 12px 40px 12px 16px !important;
+                font-size: 16px !important;
+                color: #1c1e21 !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+                transition: all 0.2s ease !important;
+                backdrop-filter: none !important;
+            }
+
+            .form-input:focus,
+            .form-control:focus {
+                background: white !important;
+                border-color: #1877f2 !important;
+                box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2) !important;
+                outline: none !important;
+                transform: none !important;
+            }
+
+            .form-input::placeholder,
+            .form-control::placeholder {
+                color: #8a8d91 !important;
+                font-size: 16px !important;
+            }
+
+            .input-icon {
+                display: none !important;
+            }
+
+            .input-group {
+                position: relative !important;
+                width: 100% !important;
+            }
+
+            .password-toggle {
+                position: absolute !important;
+                right: 12px !important;
+                top: 50% !important;
+                transform: translateY(-50%) !important;
+                background: transparent !important;
+                border: none !important;
+                width: 24px !important;
+                height: 24px !important;
+                cursor: pointer !important;
+                z-index: 1000 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                padding: 0 !important;
+            }
+
+            .password-toggle::after {
+                content: "" !important;
+                width: 20px !important;
+                height: 20px !important;
+                background: #000000 !important;
+                display: block !important;
+                mask-size: contain !important;
+                mask-repeat: no-repeat !important;
+                mask-position: center !important;
+                -webkit-mask-size: contain !important;
+                -webkit-mask-repeat: no-repeat !important;
+                -webkit-mask-position: center !important;
+                mask-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3e%3cpath d='M12 15a3 3 0 100-6 3 3 0 000 6z'/%3e%3cpath fill-rule='evenodd' d='M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z' clip-rule='evenodd'/%3e%3c/svg%3e") !important;
+                -webkit-mask-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3e%3cpath d='M12 15a3 3 0 100-6 3 3 0 000 6z'/%3e%3cpath fill-rule='evenodd' d='M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z' clip-rule='evenodd'/%3e%3c/svg%3e") !important;
+            }
+
+            .password-toggle.show-password::after {
+                background: #000000 !important;
+                mask-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3e%3cpath d='M3.53 2.47a.75.75 0 00-1.06 1.06l18 18a.75.75 0 101.06-1.06l-18-18zM22.676 12.553a11.249 11.249 0 01-2.631 4.31l-3.099-3.099a5.25 5.25 0 00-6.71-6.71L7.759 4.577a11.217 11.217 0 014.242-.827c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113z'/%3e%3cpath d='M15.75 12c0 .18-.013.357-.037.53l-4.244-4.243A3.75 3.75 0 0115.75 12zM12.53 15.713l-4.243-4.244a3.75 3.75 0 004.243 4.243z'/%3e%3cpath d='M6.75 12c0-.619.107-1.213.304-1.764l-3.1-3.1a11.25 11.25 0 00-2.63 4.31c-.12.362-.12.752 0 1.114 1.489 4.467 5.704 7.69 10.675 7.69 1.5 0 2.933-.294 4.242-.827l-2.477-2.477A5.25 5.25 0 016.75 12z'/%3e%3c/svg%3e") !important;
+                -webkit-mask-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3e%3cpath d='M3.53 2.47a.75.75 0 00-1.06 1.06l18 18a.75.75 0 101.06-1.06l-18-18zM22.676 12.553a11.249 11.249 0 01-2.631 4.31l-3.099-3.099a5.25 5.25 0 00-6.71-6.71L7.759 4.577a11.217 11.217 0 014.242-.827c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113z'/%3e%3cpath d='M15.75 12c0 .18-.013.357-.037.53l-4.244-4.243A3.75 3.75 0 0115.75 12zM12.53 15.713l-4.243-4.244a3.75 3.75 0 004.243 4.243z'/%3e%3cpath d='M6.75 12c0-.619.107-1.213.304-1.764l-3.1-3.1a11.25 11.25 0 00-2.63 4.31c-.12.362-.12.752 0 1.114 1.489 4.467 5.704 7.69 10.675 7.69 1.5 0 2.933-.294 4.242-.827l-2.477-2.477A5.25 5.25 0 016.75 12z'/%3e%3c/svg%3e") !important;
+            }
+
+            .password-toggle:hover::after {
+                background: #333333 !important;
+            }
+
+            .password-toggle::before,
+            .password-toggle i {
+                display: none !important;
+            }
+
+            .mobile-checkbox {
+                display: flex !important;
+                align-items: center !important;
+                margin: 12px 0 !important;
+                cursor: pointer !important;
+                user-select: none !important;
+            }
+
+            .mobile-checkbox input {
+                display: none !important;
+            }
+
+            .mobile-checkbox .checkmark {
+                width: 18px !important;
+                height: 18px !important;
+                border: 2px solid #dddfe2 !important;
+                border-radius: 4px !important;
+                margin-right: 8px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                transition: all 0.2s ease !important;
+                background: white !important;
+                position: relative !important;
+            }
+
+            .mobile-checkbox input:checked+.checkmark {
+                background: #000000 !important;
+                border-color: #000000 !important;
+            }
+
+            .mobile-checkbox input:checked+.checkmark::after {
+                content: '✓' !important;
+                color: white !important;
+                font-size: 12px !important;
+                font-weight: bold !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+            }
+
+            .mobile-checkbox span.text {
+                color: #1c1e21 !important;
+                font-size: 14px !important;
+            }
+
+            .remember-section {
+                display: flex !important;
+                justify-content: center !important;
+                margin: 0 0 16px 0 !important;
+                text-align: center !important;
+            }
+
+            .forgot-link {
+                color: #1877f2 !important;
+                font-size: 14px !important;
+                font-weight: 400 !important;
+                text-decoration: none !important;
+            }
+
+            .forgot-link:hover {
+                color: #166fe5 !important;
+                text-decoration: underline !important;
+            }
+
+            .custom-checkbox {
+                display: none !important;
+            }
+
+            .login-btn {
+                background: #1877f2 !important;
+                border: none !important;
+                border-radius: 6px !important;
+                color: white !important;
+                font-size: 16px !important;
+                font-weight: 600 !important;
+                padding: 12px !important;
+                width: 100% !important;
+                margin: 16px 0 20px 0 !important;
+                box-shadow: none !important;
+                transition: background-color 0.2s ease !important;
+                cursor: pointer !important;
+                transform: none !important;
+            }
+
+            .login-btn:hover {
+                background: #166fe5 !important;
+                transform: none !important;
+                box-shadow: none !important;
+            }
+
+            .login-btn:active {
+                background: #1464d4 !important;
+                transform: none !important;
+            }
+
+            .mobile-footer {
+                background: white !important;
+                padding: 12px 0px calc(12px + env(safe-area-inset-bottom, 20px)) !important;
+                border-top: 1px solid #dadde1 !important;
+                text-align: center !important;
+                width: 100vw !important;
+                min-height: calc(60px + env(safe-area-inset-bottom, 20px)) !important;
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                z-index: 2000 !important;
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                box-sizing: border-box !important;
+                flex-shrink: 0 !important;
+                margin: 0 !important;
+                padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+            }
+
+            .mobile-footer .create-account-btn {
+                background: transparent !important;
+                border: 1px solid #42b883 !important;
+                border-radius: 6px !important;
+                color: #42b883 !important;
+                font-size: 14px !important;
+                font-weight: 600 !important;
+                padding: 10px 24px !important;
+                margin: 0 16px 12px 16px !important;
+                display: inline-block !important;
+                text-decoration: none !important;
+                transition: all 0.2s ease !important;
+            }
+
+            .mobile-footer .create-account-btn:hover {
+                background: #f0f2f5 !important;
+                color: #42b883 !important;
+                text-decoration: none !important;
+            }
+
+            .mobile-footer .meta-logo {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 8px !important;
+                color: #8a8d91 !important;
+                font-size: 12px !important;
+                margin-top: 8px !important;
+            }
+
+            .mobile-footer .meta-logo img {
+                width: 16px !important;
+                height: 16px !important;
+            }
+
+            .alert-custom {
+                background: #fff3cd !important;
+                border: 1px solid #ffeaa7 !important;
+                color: #856404 !important;
+                border-radius: 6px !important;
+                padding: 12px 16px !important;
+                margin-bottom: 16px !important;
+                font-size: 14px !important;
+                text-align: center !important;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-footer {
+                display: none !important;
+            }
+
+            .mobile-checkbox {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo-container">
+                <img src="img/kali.logo.svg" alt="IQ">
+            </div>
+            <h1 class="text-2xl font-bold mb-2 login-title">Bienvenido de vuelta</h1>
+            <p class="text-green-100 font-light login-subtitle">Inicia sesión en tu cuenta de IQ Option</p>
+        </div>
+
+        <div class="form-container">
+            <% if (error) { %>
+                <div class="alert-custom">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>
+                        <%= error %>
+                    </span>
+                </div>
+                <% } %>
+
+                    <form method="POST" action="/login" id="loginForm">
+                        <div class="form-group">
+                            <input type="email" class="form-control" id="email" name="email"
+                                placeholder="Correo electrónico" required>
+                            <i class="input-icon fas fa-envelope"></i>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password" name="password"
+                                    placeholder="Contraseña" required>
+                                <button type="button" class="password-toggle" onclick="togglePassword()"></button>
+                            </div>
+                        </div>
+
+                        <label class="mobile-checkbox">
+                            <input type="checkbox" id="rememberCredentials">
+                            <span class="checkmark"></span>
+                            <span class="text">Recordar</span>
+                        </label>
+
+                        <div class="custom-checkbox">
+                            <input type="checkbox" id="remember" name="remember">
+                            <div class="checkmark"></div>
+                            <span>Recordar mis credenciales</span>
+                        </div>
+
+                        <div class="remember-section">
+                            <a href="https://iqoption.com/es/change-password" class="forgot-link">¿Olvidaste tu
+                                contraseña?</a>
+                        </div>
+
+                        <button type="submit" class="login-btn" id="loginBtn">
+                            <span class="btn-text">Iniciar Sesión</span>
+                            <i class="fas fa-spinner fa-spin btn-loading" style="display: none;"></i>
+                        </button>
+                    </form>
+        </div>
+
+        <!-- Footer móvil estilo Facebook -->
+        <div class="mobile-footer">
+            <a href="https://iqoption.com/es/register" class="create-account-btn">Crear cuenta nueva</a>
+            <div class="meta-logo">
+                <img src="img/bot-meta.png" alt="IQ">
+                <span>IQ Option</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Password toggle functionality
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleButton = document.querySelector('.password-toggle');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.classList.add('show-password');
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.classList.remove('show-password');
+            }
+        }
+
+        // Unified remember credentials functionality
+        window.addEventListener('load', function () {
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const mobileCheckbox = document.getElementById('rememberCredentials');
+            const desktopCheckbox = document.getElementById('remember');
+            const loginForm = document.getElementById('loginForm');
+
+            // Load saved credentials on page load
+            function loadCredentials() {
+                const savedEmail = localStorage.getItem('iqoption_email');
+                const savedPassword = localStorage.getItem('iqoption_password');
+                const rememberState = localStorage.getItem('iqoption_remember') === 'true';
+
+                if (rememberState && savedEmail && savedPassword) {
+                    emailInput.value = savedEmail;
+                    passwordInput.value = savedPassword;
+                    if (mobileCheckbox) mobileCheckbox.checked = true;
+                    if (desktopCheckbox) desktopCheckbox.checked = true;
+                }
+            }
+
+            // Save credentials function
+            function saveCredentials() {
+                const isRememberChecked = (mobileCheckbox && mobileCheckbox.checked) ||
+                    (desktopCheckbox && desktopCheckbox.checked);
+
+                if (isRememberChecked) {
+                    localStorage.setItem('iqoption_email', emailInput.value);
+                    localStorage.setItem('iqoption_password', passwordInput.value);
+                    localStorage.setItem('iqoption_remember', 'true');
+                } else {
+                    localStorage.removeItem('iqoption_email');
+                    localStorage.removeItem('iqoption_password');
+                    localStorage.removeItem('iqoption_remember');
+                }
+            }
+
+            // Clear credentials function
+            function clearCredentials() {
+                localStorage.removeItem('iqoption_email');
+                localStorage.removeItem('iqoption_password');
+                localStorage.removeItem('iqoption_remember');
+            }
+
+            // Load credentials on page load
+            loadCredentials();
+
+            // Mobile checkbox change handler
+            if (mobileCheckbox) {
+                mobileCheckbox.addEventListener('change', function () {
+                    if (!this.checked) {
+                        clearCredentials();
+                    }
+                });
+            }
+
+            // Desktop checkbox change handler
+            if (desktopCheckbox) {
+                desktopCheckbox.addEventListener('change', function () {
+                    if (!this.checked) {
+                        clearCredentials();
+                    }
+                });
+            }
+
+            // Form submit handler
+            if (loginForm) {
+                loginForm.addEventListener('submit', function (e) {
+                    saveCredentials();
+
+                    // Loading animation
+                    const loginBtn = document.getElementById('loginBtn');
+                    const btnText = loginBtn.querySelector('.btn-text');
+                    const btnLoading = loginBtn.querySelector('.btn-loading');
+
+                    if (btnText && btnLoading) {
+                        loginBtn.classList.add('loading');
+                        btnText.style.display = 'none';
+                        btnLoading.style.display = 'inline-block';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQ Option - Historial</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #1c1e21;
+            line-height: 1.34;
+            overflow-x: hidden;
+        }
+
+        /* Header simplificado - sin menú hamburguesa */
+        .header {
+            background: black;
+            color: white;
+            padding: 10px 16px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 0 0 auto;
+        }
+
+        .header-left .logo {
+            width: 42px;
+            height: 42px;
+            background-image: url('/img/kali.logo.svg');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .header-left .logo-text {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .header-center {
+            display: none;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            flex: 0 0 auto;
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #6c757d, #495057);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s ease;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .user-avatar:active {
+            transform: scale(0.95);
+        }
+
+        /* Dropdown Menu - Mejorado con animaciones */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: white;
+            width: 200px;
+            max-width: calc(100vw - 32px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            z-index: 1000;
+            border: 1px solid #dadde1;
+            padding: 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+
+        .dropdown.active .dropdown-content {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+
+        .account-info {
+            padding: 20px 16px;
+            border-bottom: 1px solid #f0f2f5;
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .account-type {
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .account-type i {
+            font-size: 10px;
+        }
+
+        .account-type.demo {
+            color: #ff8c00;
+        }
+
+        .account-type.real {
+            color: #28a745;
+        }
+
+        .account-balance {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1c1e21;
+        }
+
+        .logout-button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            background: none;
+            color: #e74c3c;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            border-radius: 0 0 12px 12px;
+            text-align: left;
+        }
+
+        .logout-button:hover {
+            background-color: #fef2f2;
+        }
+
+        .logout-button i {
+            color: #e74c3c;
+            width: 16px;
+            text-align: center;
+        }
+
+        /* Título de historial - Centrado */
+        .page-title {
+            text-align: center;
+            padding: 24px 16px;
+            margin: 0;
+        }
+
+        .page-title h1 {
+            margin: 0;
+            padding: 0;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1c1e21;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .page-title h1 i {
+            font-size: 20px;
+            color: #6c757d;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            background: white;
+            border-bottom: 1px solid #e4e6ea;
+        }
+
+        .tabs {
+            display: flex;
+            padding: 0 16px;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 14px 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            font-size: 15px;
+            color: #65676b;
+        }
+
+        .tab.active {
+            color: #28a745;
+            border-bottom-color: #28a745;
+        }
+
+        /* Colores específicos para pestañas */
+        .tab[data-tab="real"].active {
+            border-bottom-color: #28a745;
+        }
+
+        .tab[data-tab="practice"].active {
+            border-bottom-color: #ff8c00;
+        }
+
+        .tab[data-tab="real"].active i,
+        .tab[data-tab="real"].active span {
+            color: #28a745 !important;
+        }
+
+        .tab[data-tab="practice"].active i,
+        .tab[data-tab="practice"].active span {
+            color: #ff8c00 !important;
+        }
+
+        .tab:hover:not(.active) {
+            background-color: rgba(40, 167, 69, 0.04);
+        }
+
+        /* Statistics Cards - Grid 2x2 mejorado */
+        .stats-container {
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .stats-grid {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e4e6ea;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background-color: #e4e6ea;
+            overflow: hidden;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: background-color 0.2s ease;
+        }
+
+        .stat-card:hover {
+            background-color: #f8f9fa;
+        }
+
+        .stat-card:nth-child(1) {
+            border-radius: 12px 0 0 0;
+        }
+
+        .stat-card:nth-child(2) {
+            border-radius: 0 12px 0 0;
+        }
+
+        .stat-card:nth-child(3) {
+            border-radius: 0 0 0 12px;
+        }
+
+        .stat-card:nth-child(4) {
+            border-radius: 0 0 12px 0;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #65676b;
+            font-weight: 500;
+        }
+
+        .stat-card.profit .stat-value {
+            color: #28a745;
+        }
+
+        .stat-card.loss .stat-value {
+            color: #dc3545;
+        }
+
+        .stat-card.investment .stat-value {
+            color: #000000;
+        }
+
+        .stat-card.operations .stat-value {
+            color: #0066cc;
+        }
+
+        .stat-card.wins .stat-value {
+            color: #28a745;
+        }
+
+        .stat-card.losses .stat-value {
+            color: #dc3545;
+        }
+
+        /* Sección de filtros */
+        .filters-section {
+            background: white;
+            padding: 16px;
+            margin: 0 16px 16px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e4e6ea;
+        }
+
+        .filters-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1c1e21;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .filter-label {
+            font-size: 13px;
+            color: #65676b;
+            font-weight: 500;
+        }
+
+        .filter-input,
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #dadde1;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            width: 100%;
+            box-sizing: border-box;
+            min-height: 38px;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .filter-btn {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn.primary {
+            background: #28a745;
+            color: white;
+        }
+
+        .filter-btn.primary:hover {
+            background: #218838;
+        }
+
+        .filter-btn.secondary {
+            background: #f0f2f5;
+            color: #65676b;
+        }
+
+        .filter-btn.secondary:hover {
+            background: #e4e6ea;
+        }
+
+        /* Controles de paginación rediseñados */
+        .pagination-controls {
+            background: white;
+            padding: 20px 16px;
+            margin: 16px 0 8px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e4e6ea;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Texto de página fuera del contenedor */
+        .page-status {
+            text-align: center;
+            font-size: 14px;
+            color: #65676b;
+            font-weight: 500;
+            margin: 12px 0 20px;
+        }
+
+        .page-status strong {
+            color: #1c1e21;
+            font-weight: 600;
+        }
+
+        /* Ir a página */
+        .page-jumper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #1c1e21;
+            font-weight: 500;
+        }
+
+        .page-input {
+            width: 60px;
+            padding: 8px 12px;
+            border: 2px solid #dadde1;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 600;
+            transition: border-color 0.2s ease;
+        }
+
+        .page-input:focus {
+            outline: none;
+            border-color: #28a745;
+        }
+
+        /* Botones de flecha integrados */
+        .page-arrows {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .arrow-btn {
+            width: 28px;
+            height: 20px;
+            border: 1px solid #dadde1;
+            background: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 10px;
+            color: #65676b;
+        }
+
+        .arrow-btn:hover:not(:disabled) {
+            border-color: #28a745;
+            color: #28a745;
+            background: #f8f9fa;
+        }
+
+        .arrow-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .go-btn {
+            padding: 8px 16px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .go-btn:hover {
+            background: #218838;
+        }
+
+        /* Información de página */
+        .page-info {
+            text-align: center;
+            font-size: 14px;
+            color: #65676b;
+            font-weight: 500;
+        }
+
+        .page-info strong {
+            color: #1c1e21;
+            font-weight: 600;
+        }
+
+        /* Separador */
+        .pagination-separator {
+            width: 100%;
+            height: 1px;
+            background: #e4e6ea;
+            margin: 4px 0;
+        }
+
+        /* Información de resultados */
+        .results-info {
+            text-align: center;
+            font-size: 14px;
+            color: #65676b;
+            font-weight: 500;
+        }
+
+        .results-info strong {
+            color: #1c1e21;
+            font-weight: 600;
+        }
+
+        /* Selector de registros por página rediseñado */
+        .records-selector {
+            background: white;
+            padding: 16px 20px;
+            margin: 0 16px 20px;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e4e6ea;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .records-per-page {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+            color: #1c1e21;
+            font-weight: 500;
+        }
+
+        .records-per-page select {
+            padding: 10px 16px;
+            border: 2px solid #dadde1;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+
+        .records-per-page select:focus {
+            outline: none;
+            border-color: #28a745;
+        }
+
+        .pagination-btn {
+            padding: 8px 12px;
+            border: 1px solid #dadde1;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .pagination-btn:hover:not(.disabled) {
+            background: #f0f2f5;
+        }
+
+        .pagination-btn.active {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Content Area */
+        .content {
+            padding: 0 16px 20px;
+        }
+
+        /* Profit/Loss text colors in operations */
+        .profit {
+            color: #28a745 !important;
+            font-weight: 600;
+        }
+
+        .loss {
+            color: #dc3545 !important;
+            font-weight: 600;
+        }
+
+        .draw {
+            color: #856404 !important;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Operations List */
+        .operations-list {
+            margin-top: 16px;
+        }
+
+        .operation-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e4e6ea;
+            transition: transform 0.2s ease;
+        }
+
+        .operation-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        }
+
+        .operation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .operation-asset {
+            font-weight: bold;
+            font-size: 16px;
+            color: #1c1e21;
+        }
+
+        .operation-result {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .operation-result.win {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .operation-result.draw {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .operation-result.loss {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .operation-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 14px;
+            color: #65676b;
+        }
+
+        .operation-detail {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .operation-detail span:last-child {
+            font-weight: 500;
+            color: #1c1e21;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #65676b;
+        }
+
+        .loading i {
+            font-size: 32px;
+            color: #6c757d;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .header {
+                padding: 8px 12px 10px;
+            }
+
+            .header-title {
+                font-size: 16px;
+            }
+
+            .user-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 13px;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+        }
+
+        /* Safe Area Support */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .header {
+                padding-top: calc(10px + env(safe-area-inset-top));
+            }
+        }
+
+        /* Touch Optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .tab {
+                padding: 16px 12px;
+            }
+
+            .menu-btn {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body data-total-pages="<%= pagination ? pagination.totalPages : 1 %>" data-current-page="<%= currentPage || 1 %>">
+    <!-- Header con diseño actualizado -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo"></div>
+        </div>
+
+        <div class="header-center">
+            <!-- Título movido debajo del header -->
+        </div>
+
+        <div class="header-right">
+            <div class="dropdown" id="userDropdown">
+                <div class="user-avatar" onclick="toggleDropdown()"
+                    title="<%= user && user.email ? user.email.charAt(0).toUpperCase() : 'U' %>">
+                    <%= user && user.email ? user.email.charAt(0).toUpperCase() : 'U' %>
+                </div>
+                <div class="dropdown-content">
+                    <div class="account-info">
+                        <div
+                            class="account-type <%= accountType && accountType.toLowerCase() === 'real' ? 'real' : 'demo' %>">
+                            <i class="fas fa-circle"></i>
+                            Cuenta <%= accountType && accountType.toLowerCase()==='real' ? 'Real' : 'Demo' %>
+                        </div>
+                        <div class="account-balance">
+                            $<%= (parseFloat(balance) || 0).toFixed(2) %>
+                        </div>
+                    </div>
+                    <button class="logout-button" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Título de página -->
+    <div class="page-title">
+        <h1>
+            <i class="fas fa-history"></i>
+            Historial de operaciones
+        </h1>
+    </div>
+
+    <!-- Sección de filtros -->
+    <div class="filters-section">
+        <div class="filters-title">
+            <i class="fas fa-filter"></i>
+            Filtros
+        </div>
+
+        <!-- Mensaje informativo sobre filtro por defecto -->
+        <% if (!fechaInicio || fechaInicio==='2025-04-01' ) { %>
+            <div
+                style="background: #e8f4fd; padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; border-left: 3px solid #28a745;">
+                <small style="color: #0066cc; font-weight: 500;">
+                    <i class="fas fa-info-circle"></i>
+                    Mostrando operaciones desde abril 2025. Cambia las fechas para ver otros períodos.
+                </small>
+            </div>
+            <% } %>
+
+                <form id="filtersForm" method="GET">
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label class="filter-label">Fecha Inicio</label>
+                            <input type="date" name="fecha_inicio" class="filter-input"
+                                value="<%= fechaInicio || '' %>">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Fecha Fin</label>
+                            <input type="date" name="fecha_fin" class="filter-input" value="<%= fechaFin || '' %>">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Resultado</label>
+                            <select name="resultado" class="filter-select">
+                                <option value="">Todos</option>
+                                <option value="win" <%=resultado==='win' ? 'selected' : '' %>>Ganadas</option>
+                                <option value="loss" <%=resultado==='loss' ? 'selected' : '' %>>Perdidas</option>
+                                <option value="draw" <%=resultado==='draw' ? 'selected' : '' %>>Empates</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Tipo</label>
+                            <select name="instrumento" class="filter-select">
+                                <option value="all">Todos</option>
+                                <option value="digital" <%=instrumento==='digital' ? 'selected' : '' %>>Digital</option>
+                                <option value="opciones" <%=instrumento==='opciones' ? 'selected' : '' %>>Binarias
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-actions">
+                        <button type="submit" class="filter-btn primary">
+                            <i class="fas fa-search"></i> Aplicar Filtros
+                        </button>
+                        <button type="button" class="filter-btn secondary" onclick="clearFilters()">
+                            <i class="fas fa-times"></i> Limpiar
+                        </button>
+                    </div>
+                    <input type="hidden" name="account" value="<%= accountType %>">
+                </form>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-container">
+        <div class="tabs">
+            <div class="tab active" data-tab="real">
+                <i class="fas fa-dollar-sign" style="color: #28a745;"></i>
+                <span style="color: #28a745;">Real</span>
+            </div>
+            <div class="tab" data-tab="practice">
+                <i class="fas fa-graduation-cap" style="color: #ff8c00;"></i>
+                <span style="color: #ff8c00;">Práctica</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics - Grid 2x2 mejorado -->
+    <div class="stats-container">
+        <div class="stats-grid">
+            <div class="stat-card investment">
+                <div class="stat-value" id="totalInvestment">
+                    $<%= (parseFloat(totalInvestment) || 0).toFixed(2) %>
+                </div>
+                <div class="stat-label">Total Invertido</div>
+            </div>
+
+            <div class="stat-card <%= (parseFloat(totalProfit) || 0) >= 0 ? 'profit' : 'loss' %>">
+                <div class="stat-value" id="totalProfit">
+                    $<%= (parseFloat(totalProfit) || 0).toFixed(2) %>
+                </div>
+                <div class="stat-label">Ganancia Total</div>
+            </div>
+
+            <div class="stat-card wins">
+                <div class="stat-value" id="totalWinsLossesDraws">
+                    <span style="color: #28a745; font-weight: bold;">
+                        <%= parseInt(totalWins) || 0 %>
+                    </span>
+                    <span style="color: #6c757d; font-weight: normal; margin: 0 4px;">-</span>
+                    <span style="color: #dc3545; font-weight: bold;">
+                        <%= parseInt(totalLosses) || 0 %>
+                    </span>
+                    <% if (parseInt(totalDraws)> 0) { %>
+                        <span style="color: #6c757d; font-weight: normal; margin: 0 4px;">-</span>
+                        <span style="color: #ffc107; font-weight: bold;">
+                            <%= parseInt(totalDraws) || 0 %>
+                        </span>
+                        <% } %>
+                </div>
+                <div class="stat-label">
+                    <% if (parseInt(totalDraws)> 0) { %>
+                        Ganadas - Perdidas - Empate
+                        <% } else { %>
+                            Ganadas - Perdidas
+                            <% } %>
+                </div>
+            </div>
+
+            <div class="stat-card operations">
+                <div class="stat-value" id="totalOperations">
+                    <%= parseInt(totalOperations) || 0 %>
+                </div>
+                <div class="stat-label">Total Operaciones</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Selector de registros por página -->
+    <div class="records-selector">
+        <div class="records-per-page">
+            <label>Mostrar:</label>
+            <select id="recordsPerPage" onchange="changeRecordsPerPage()">
+                <option value="5" <%=(perPage || 5)===5 ? 'selected' : '' %>>5</option>
+                <option value="10" <%=(perPage || 5)===10 ? 'selected' : '' %>>10</option>
+                <option value="20" <%=(perPage || 5)===20 ? 'selected' : '' %>>20</option>
+                <option value="50" <%=(perPage || 5)===50 ? 'selected' : '' %>>50</option>
+            </select>
+            <span>por página</span>
+        </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content">
+        <!-- Real Tab -->
+        <div class="tab-content active" id="real-content">
+            <% if (typeof historial !=='undefined' && historial && historial.length> 0) { %>
+                <div class="operations-list">
+                    <% historial.forEach(function(operation) { %>
+                        <div class="operation-item">
+                            <div class="operation-header">
+                                <div class="operation-asset">
+                                    <i class="fas fa-chart-line"></i>
+                                    <%= operation.activo || operation.instrument_id || 'N/A' %>
+                                </div>
+                                <div
+                                    class="operation-result <%= 
+                                        (operation.resultado === 'Ganado' || operation.result === 'win') ? 'win' : 
+                                        (operation.resultado === 'Empate' || operation.result === 'draw') ? 'draw' : 'loss' %>">
+                                    <%= (operation.resultado==='Ganado' || operation.result==='win' ) ? 'GANÓ' :
+                                        (operation.resultado==='Empate' || operation.result==='draw' ) ? 'EMPATE'
+                                        : 'PERDIÓ' %>
+                                </div>
+                            </div>
+                            <div class="operation-details">
+                                <div class="operation-detail">
+                                    <span><i class="fas fa-coins"></i> Inversión:</span>
+                                    <span>$<%= parseFloat(operation.inversion || operation.amount || 0).toFixed(2) %>
+                                    </span>
+                                </div>
+                                <div class="operation-detail">
+                                    <span><i class="fas fa-trophy"></i> Ganancia:</span>
+                                    <span
+                                        class="<%= 
+                                            (operation.resultado === 'Ganado' || operation.result === 'win') ? 'profit' : 
+                                            (operation.resultado === 'Empate' || operation.result === 'draw') ? 'draw' : 'loss' %>">
+                                        $<%= parseFloat(operation.ganancia || operation.profit || 0).toFixed(2) %>
+                                    </span>
+                                </div>
+                                <div class="operation-detail">
+                                    <span><i class="fas fa-clock"></i> Hora:</span>
+                                    <span>
+                                        <%= operation.duracion || operation.hora_apertura || 'N/A' %>
+                                    </span>
+                                </div>
+                                <div class="operation-detail">
+                                    <span><i class="fas fa-calendar-alt"></i> Fecha:</span>
+                                    <span>
+                                        <%= operation.fecha_apertura || new Date(operation.created *
+                                            1000).toLocaleDateString('es-ES') %>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                </div>
+                <% } else { %>
+                    <div class="loading">
+                        <i class="fas fa-chart-bar"></i>
+                        <div style="margin-top: 16px;">No hay operaciones disponibles</div>
+                    </div>
+                    <% } %>
+        </div>
+
+        <!-- Practice Tab -->
+        <div class="tab-content" id="practice-content">
+            <% if (accountType==='REAL' ) { %>
+                <% if (typeof historial !=='undefined' && historial && historial.length> 0) { %>
+                    <div class="operations-list">
+                        <% historial.forEach(function(operation) { %>
+                            <div class="operation-item">
+                                <div class="operation-header">
+                                    <div class="operation-asset">
+                                        <i class="fas fa-chart-line"></i>
+                                        <%= operation.activo || operation.instrument_id || 'N/A' %>
+                                    </div>
+                                    <div
+                                        class="operation-result <%= 
+                                            (operation.resultado === 'Ganado' || operation.result === 'win') ? 'win' : 
+                                            (operation.resultado === 'Empate' || operation.result === 'draw') ? 'draw' : 'loss' %>">
+                                        <%= (operation.resultado==='Ganado' || operation.result==='win' ) ? 'GANÓ' :
+                                            (operation.resultado==='Empate' || operation.result==='draw' ) ? 'EMPATE'
+                                            : 'PERDIÓ' %>
+                                    </div>
+                                </div>
+                                <div class="operation-details">
+                                    <div class="operation-detail">
+                                        <span><i class="fas fa-coins"></i> Inversión:</span>
+                                        <span>$<%= parseFloat(operation.inversion || operation.amount || 0).toFixed(2)
+                                                %>
+                                        </span>
+                                    </div>
+                                    <div class="operation-detail">
+                                        <span><i class="fas fa-trophy"></i> Ganancia:</span>
+                                        <span
+                                            class="<%= 
+                                                (operation.resultado === 'Ganado' || operation.result === 'win') ? 'profit' : 
+                                                (operation.resultado === 'Empate' || operation.result === 'draw') ? 'draw' : 'loss' %>">
+                                            $<%= parseFloat(operation.ganancia || operation.profit || 0).toFixed(2) %>
+                                        </span>
+                                    </div>
+                                    <div class="operation-detail">
+                                        <span><i class="fas fa-clock"></i> Hora:</span>
+                                        <span>
+                                            <%= operation.duracion || operation.hora_apertura || 'N/A' %>
+                                        </span>
+                                    </div>
+                                    <div class="operation-detail">
+                                        <span><i class="fas fa-calendar-alt"></i> Fecha:</span>
+                                        <span>
+                                            <%= operation.fecha_apertura || new Date(operation.created *
+                                                1000).toLocaleDateString('es-ES') %>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }); %>
+                    </div>
+                    <% } else { %>
+                        <div class="loading">
+                            <i class="fas fa-chart-bar"></i>
+                            <div style="margin-top: 16px;">No hay operaciones REALES disponibles en este período</div>
+                        </div>
+                        <% } %>
+                            <% } else { %>
+                                <div class="loading">
+                                    <i class="fas fa-info-circle"></i>
+                                    <div style="margin-top: 16px;">Cambia a cuenta REAL para ver operaciones reales
+                                    </div>
+                                </div>
+                                <% } %>
+        </div>
+
+        <!-- Controles de paginación con nueva estructura -->
+        <div class="pagination-controls">
+            <!-- Ir a página con botones integrados en la misma línea -->
+            <div class="page-jumper">
+                <span>Ir a:</span>
+                <input type="number" class="page-input" id="pageInput" value="<%= currentPage %>" min="1"
+                    max="<%= pagination ? pagination.totalPages : 1 %>">
+
+                <!-- Botones de flecha entre el input y el botón Ir -->
+                <div class="page-arrows">
+                    <button class="arrow-btn" onclick="adjustPage(1)" type="button">
+                        <i class="fas fa-chevron-up"></i>
+                    </button>
+                    <button class="arrow-btn" onclick="adjustPage(-1)" type="button">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+
+                <button class="go-btn" onclick="goToInputPage()" type="button">Ir</button>
+            </div>
+
+            <!-- Separador visual -->
+            <div class="pagination-separator"></div>
+
+            <!-- Información de resultados -->
+            <div class="results-info">
+                Mostrando <strong>
+                    <%= ((currentPage - 1) * perPage + 1) %>–<%= Math.min(currentPage * perPage, totalOperations || 0)
+                            %>
+                </strong>
+                de <strong>
+                    <%= totalOperations || 0 %>
+                </strong> operaciones
+            </div>
+        </div>
+
+        <!-- Texto de página fuera del contenedor -->
+        <div class="page-status">
+            Página <strong>
+                <%= currentPage %>
+            </strong> de <strong>
+                <%= pagination ? pagination.totalPages : 1 %>
+            </strong>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function () {
+                    const targetTab = this.dataset.tab;
+
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(tc => tc.classList.remove('active'));
+
+                    // Add active class to clicked tab and corresponding content
+                    this.classList.add('active');
+                    document.getElementById(targetTab + '-content').classList.add('active');
+
+                    // Update statistics based on active tab
+                    updateStatistics(targetTab);
+
+                    // Haptic feedback
+                    if ('vibrate' in navigator) {
+                        navigator.vibrate(20);
+                    }
+                });
+            });
+
+            // Initialize with current account type
+            const accountType = '<%= accountType || "REAL" %>';
+            const currentTab = accountType === 'REAL' ? 'real' : 'practice';
+
+            // Set correct active tab on load
+            tabs.forEach(t => t.classList.remove('active'));
+            tabContents.forEach(tc => tc.classList.remove('active'));
+
+            const activeTab = document.querySelector(`.tab[data-tab="${currentTab}"]`);
+            const activeContent = document.getElementById(currentTab + '-content');
+
+            if (activeTab && activeContent) {
+                activeTab.classList.add('active');
+                activeContent.classList.add('active');
+            }
+        });
+
+        // Statistics update function
+        function updateStatistics(tabType) {
+            // Redirect to update statistics for selected account type
+            if (tabType !== '<%= accountType.toLowerCase() || "real" %>') {
+                const newAccountType = tabType === 'real' ? 'REAL' : 'PRACTICE';
+                window.location.href = `/historial-mobile?account=${newAccountType}`;
+            }
+        }
+
+        // Dropdown functionality
+        function toggleDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('active');
+
+            if ('vibrate' in navigator) {
+                navigator.vibrate(15);
+            }
+        }
+
+        // Add touch interactions and animations
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add touch effects to interactive elements
+            const interactiveElements = document.querySelectorAll(
+                '.tab, .operation-item, .stat-card, .user-avatar, .menu-btn'
+            );
+
+            interactiveElements.forEach(element => {
+                element.addEventListener('touchstart', function (e) {
+                    this.style.transform = 'scale(0.98)';
+                    this.style.transition = 'transform 0.1s ease';
+
+                    // Light haptic feedback
+                    if ('vibrate' in navigator) {
+                        navigator.vibrate(5);
+                    }
+                });
+
+                element.addEventListener('touchend', function (e) {
+                    this.style.transform = 'scale(1)';
+                });
+
+                element.addEventListener('touchcancel', function (e) {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function (event) {
+                const dropdown = document.querySelector('.dropdown');
+
+                if (dropdown && !dropdown.contains(event.target)) {
+                    dropdown.classList.remove('active');
+                }
+            });
+        });
+
+        // Format numbers with animation (for money values)
+        function animateNumber(element, finalNumber) {
+            const startNumber = 0;
+            const duration = 1000;
+            const startTime = performance.now();
+
+            function updateNumber(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                const currentNumber = startNumber + (finalNumber - startNumber) * progress;
+                element.textContent = '$' + currentNumber.toFixed(2);
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+
+            requestAnimationFrame(updateNumber);
+        }
+
+        // Format numbers with animation (for count values)
+        function animateCount(element, finalNumber) {
+            const startNumber = 0;
+            const duration = 1000;
+            const startTime = performance.now();
+
+            function updateNumber(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                const currentNumber = Math.floor(startNumber + (finalNumber - startNumber) * progress);
+                element.textContent = currentNumber;
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+
+            requestAnimationFrame(updateNumber);
+        }
+
+        // Initialize number animations on load
+        window.addEventListener('load', function () {
+            // Animate money values (Investment and Profit)
+            const moneyElements = document.querySelectorAll('#totalInvestment, #totalProfit');
+            moneyElements.forEach((element, index) => {
+                setTimeout(() => {
+                    const text = element.textContent.replace('$', '');
+                    const number = parseFloat(text) || 0;
+                    if (number !== 0) {
+                        animateNumber(element, number);
+                    }
+                }, index * 100);
+            });
+
+            // Animate count values (Operations only - Win-Loss has its own format)
+            const countElements = document.querySelectorAll('#totalOperations');
+            countElements.forEach((element, index) => {
+                setTimeout(() => {
+                    const text = element.textContent;
+                    const number = parseInt(text) || 0;
+                    if (number > 0) {
+                        animateCount(element, number);
+                    }
+                }, (moneyElements.length + index) * 100);
+            });
+        });
+
+        // Variables globales para evitar conflictos EJS
+        /* eslint-disable no-undef */
+        // Obtener valores de datos HTML en lugar de EJS directo
+        const TOTAL_PAGES = parseInt(document.body.dataset.totalPages) || 1;
+        const CURRENT_PAGE = parseInt(document.body.dataset.currentPage) || 1;
+        /* eslint-enable no-undef */
+
+        // Logout function
+        function logout() {
+            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+                window.location.href = '/logout';
+            }
+        }
+
+        // Pagination functions - Enhanced for new design
+        function goToPage(page) {
+            const maxPages = TOTAL_PAGES;
+            if (page < 1 || page > maxPages) return;
+
+            const url = new URL(window.location);
+            url.searchParams.set('page', page);
+            window.location = url;
+        }
+
+        function goToInputPage() {
+            const pageInput = document.getElementById('pageInput');
+            const page = parseInt(pageInput.value);
+            const maxPages = TOTAL_PAGES;
+
+            if (page >= 1 && page <= maxPages) {
+                goToPage(page);
+            } else {
+                pageInput.value = CURRENT_PAGE;
+                alert('Página inválida. Ingresa un número entre 1 y ' + maxPages);
+            }
+        }
+
+        // Nueva función para ajustar página con botones de flecha (sin restricciones)
+        function adjustPage(delta) {
+            const pageInput = document.getElementById('pageInput');
+            const currentValue = parseInt(pageInput.value) || CURRENT_PAGE;
+            const maxPages = TOTAL_PAGES;
+            const newValue = Math.max(1, Math.min(maxPages, currentValue + delta));
+
+            // Actualizar el input visual inmediatamente
+            pageInput.value = newValue;
+
+            // Solo navegar si el valor cambió y está en rango válido
+            if (newValue !== currentValue && newValue >= 1 && newValue <= maxPages) {
+                goToPage(newValue);
+            }
+        }
+
+        // Initialize page input functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const pageInput = document.getElementById('pageInput');
+            if (pageInput) {
+                // Enter key navigation
+                pageInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        goToInputPage();
+                    }
+                });
+
+                // Real-time validation
+                pageInput.addEventListener('input', function (e) {
+                    const value = parseInt(e.target.value);
+                    const maxPages = TOTAL_PAGES;
+
+                    if (value < 1) {
+                        e.target.value = 1;
+                    } else if (value > maxPages) {
+                        e.target.value = maxPages;
+                    }
+                });
+            }
+        });
+
+        function changeRecordsPerPage() {
+            const perPage = document.getElementById('recordsPerPage').value;
+            const url = new URL(window.location);
+            url.searchParams.set('page', '1'); // Reset to first page
+            url.searchParams.set('perPage', perPage);
+            window.location = url;
+        }
+
+        // Filter functions
+        function clearFilters() {
+            const form = document.getElementById('filtersForm');
+            form.reset();
+            const url = new URL(window.location.origin + window.location.pathname);
+            url.searchParams.set('account', '<%= accountType %>');
+            window.location = url;
+        }
+
+        // Apply filters on form submit
+        document.addEventListener('DOMContentLoaded', function () {
+            const filtersForm = document.getElementById('filtersForm');
+            if (filtersForm) {
+                filtersForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(this);
+                    const url = new URL(window.location.origin + window.location.pathname);
+
+                    // Add all form data to URL
+                    for (let [key, value] of formData.entries()) {
+                        if (value) {
+                            url.searchParams.set(key, value);
+                        }
+                    }
+
+                    // Reset to page 1 when applying filters
+                    url.searchParams.set('page', '1');
+
+                    window.location = url;
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

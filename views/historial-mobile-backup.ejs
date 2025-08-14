@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="white">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Historial de Operaciones - IQ Option</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* RESET COMPLETO - ESTILO FACEBOOK MOBILE */
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+        }
+
+        html {
+            background: #f0f2f5 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+        }
+
+        body {
+            background: #f0f2f5 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            width: 100vw !important;
+            color: #1c1e21 !important;
+            font-size: 14px !important;
+            line-height: 1.34 !important;
+            overflow-x: hidden !important;
+            position: relative !important;
+        }
+
+        /* HEADER CON LOGO Y NAVEGACIÓN */
+        .header-container {
+            background: #f0f2f5 !important;
+            padding: 16px 0 8px 0 !important;
+            text-align: center !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 1000 !important;
+            border-bottom: 1px solid #dadde1 !important;
+        }
+
+        .logo-container {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin-bottom: 12px !important;
+        }
+
+        .logo-container img {
+            width: 80px !important;
+            height: auto !important;
+        }
+
+        .header-nav {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            padding: 0 16px !important;
+            margin-bottom: 8px !important;
+        }
+
+        .nav-title {
+            color: #1c1e21 !important;
+            font-size: 20px !important;
+            font-weight: 700 !important;
+            margin: 0 !important;
+        }
+
+        .nav-actions {
+            display: flex !important;
+            gap: 8px !important;
+        }
+
+        .nav-btn {
+            background: transparent !important;
+            border: 1px solid #dadde1 !important;
+            border-radius: 6px !important;
+            color: #1c1e21 !important;
+            font-size: 12px !important;
+            font-weight: 500 !important;
+            padding: 6px 10px !important;
+            text-decoration: none !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .nav-btn:hover {
+            background: #f0f2f5 !important;
+            color: #1c1e21 !important;
+            text-decoration: none !important;
+        }
+
+        .nav-btn.logout {
+            color: #f02849 !important;
+            border-color: #f02849 !important;
+        }
+
+        /* INFORMACIÓN DE CUENTA - ESTILO FACEBOOK */
+        .account-section {
+            background: white !important;
+            margin: 8px 16px !important;
+            border-radius: 8px !important;
+            padding: 16px !important;
+            border: 1px solid #dadde1 !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .account-header {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            margin-bottom: 12px !important;
+        }
+
+        .account-balance {
+            font-size: 24px !important;
+            font-weight: 700 !important;
+            color: #1c1e21 !important;
+        }
+
+        .account-balance.practice {
+            color: #1877f2 !important;
+        }
+
+        .account-balance.real {
+            color: #42b883 !important;
+        }
+
+        .account-type {
+            color: #65676b !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+        }
+
+        .account-toggle {
+            display: flex !important;
+            background: #f0f2f5 !important;
+            border-radius: 6px !important;
+            padding: 2px !important;
+            margin-top: 8px !important;
+        }
+
+        .toggle-btn {
+            flex: 1 !important;
+            padding: 8px 16px !important;
+            border: none !important;
+            background: transparent !important;
+            color: #65676b !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            text-decoration: none !important;
+            text-align: center !important;
+            border-radius: 4px !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .toggle-btn.active {
+            background: white !important;
+            color: #1c1e21 !important;
+            font-weight: 600 !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        /* FILTROS - ESTILO FACEBOOK */
+        .filters-section {
+            background: white !important;
+            margin: 8px 16px !important;
+            border-radius: 8px !important;
+            border: 1px solid #dadde1 !important;
+            overflow: hidden !important;
+        }
+
+        .filters-header {
+            background: #f8f9fa !important;
+            padding: 12px 16px !important;
+            border-bottom: 1px solid #dadde1 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            cursor: pointer !important;
+        }
+
+        .filters-title {
+            color: #1c1e21 !important;
+            font-size: 16px !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+        }
+
+        .filters-icon {
+            color: #65676b !important;
+            transition: transform 0.2s ease !important;
+        }
+
+        .filters-icon.open {
+            transform: rotate(180deg) !important;
+        }
+
+        .filters-content {
+            padding: 16px !important;
+            display: none !important;
+        }
+
+        .filters-content.show {
+            display: block !important;
+        }
+
+        .filter-group {
+            margin-bottom: 12px !important;
+        }
+
+        .filter-label {
+            color: #1c1e21 !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            margin-bottom: 4px !important;
+            display: block !important;
+        }
+
+        .filter-input,
+        .filter-select {
+            background: white !important;
+            border: 1px solid #dddfe2 !important;
+            border-radius: 6px !important;
+            padding: 8px 12px !important;
+            font-size: 14px !important;
+            color: #1c1e21 !important;
+            width: 100% !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .filter-input:focus,
+        .filter-select:focus {
+            border-color: #1877f2 !important;
+            box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2) !important;
+            outline: none !important;
+        }
+
+        .filter-buttons {
+            display: flex !important;
+            gap: 8px !important;
+            margin-top: 16px !important;
+        }
+
+        .btn-filter {
+            flex: 1 !important;
+            background: #1877f2 !important;
+            border: none !important;
+            border-radius: 6px !important;
+            color: white !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            padding: 10px !important;
+            cursor: pointer !important;
+            transition: background-color 0.2s ease !important;
+        }
+
+        .btn-filter:hover {
+            background: #166fe5 !important;
+        }
+
+        .btn-clear {
+            flex: 1 !important;
+            background: transparent !important;
+            border: 1px solid #dadde1 !important;
+            border-radius: 6px !important;
+            color: #1c1e21 !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            padding: 10px !important;
+            cursor: pointer !important;
+            text-decoration: none !important;
+            text-align: center !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .btn-clear:hover {
+            background: #f0f2f5 !important;
+            color: #1c1e21 !important;
+            text-decoration: none !important;
+        }
+
+        /* ESTADÍSTICAS - ESTILO FACEBOOK */
+        .stats-section {
+            background: white !important;
+            margin: 8px 16px !important;
+            border-radius: 8px !important;
+            border: 1px solid #dadde1 !important;
+            padding: 16px !important;
+        }
+
+        .stats-header {
+            color: #1c1e21 !important;
+            font-size: 16px !important;
+            font-weight: 600 !important;
+            margin-bottom: 12px !important;
+        }
+
+        .stats-grid {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 12px !important;
+        }
+
+        .stat-card {
+            background: #f8f9fa !important;
+            border-radius: 6px !important;
+            padding: 12px !important;
+            text-align: center !important;
+        }
+
+        .stat-value {
+            color: #1c1e21 !important;
+            font-size: 18px !important;
+            font-weight: 700 !important;
+            margin-bottom: 2px !important;
+        }
+
+        .stat-value.positive {
+            color: #42b883 !important;
+        }
+
+        .stat-value.negative {
+            color: #f02849 !important;
+        }
+
+        .stat-label {
+            color: #65676b !important;
+            font-size: 12px !important;
+            font-weight: 400 !important;
+        }
+
+        /* OPERACIONES - TARJETAS ESTILO FACEBOOK */
+        .operations-section {
+            margin: 8px 16px 100px 16px !important;
+        }
+
+        .operations-header {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            margin-bottom: 8px !important;
+            padding: 0 4px !important;
+        }
+
+        .operations-count {
+            color: #65676b !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+        }
+
+        .page-size-selector {
+            background: white !important;
+            border: 1px solid #dddfe2 !important;
+            border-radius: 6px !important;
+            padding: 4px 8px !important;
+            font-size: 12px !important;
+            color: #1c1e21 !important;
+        }
+
+        .operation-card {
+            background: white !important;
+            border: 1px solid #dadde1 !important;
+            border-radius: 8px !important;
+            margin-bottom: 8px !important;
+            overflow: hidden !important;
+        }
+
+        .operation-header {
+            background: #f8f9fa !important;
+            padding: 10px 16px !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            border-bottom: 1px solid #dadde1 !important;
+        }
+
+        .operation-date {
+            color: #65676b !important;
+            font-size: 12px !important;
+            font-weight: 500 !important;
+        }
+
+        .operation-result {
+            font-size: 11px !important;
+            font-weight: 600 !important;
+            text-transform: uppercase !important;
+            padding: 4px 8px !important;
+            border-radius: 4px !important;
+        }
+
+        .result-win {
+            background: #d1f2eb !important;
+            color: #42b883 !important;
+        }
+
+        .result-loss {
+            background: #fadbd8 !important;
+            color: #f02849 !important;
+        }
+
+        .operation-body {
+            padding: 16px !important;
+        }
+
+        .operation-main {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            margin-bottom: 12px !important;
+        }
+
+        .operation-asset {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+
+        .asset-name {
+            color: #1c1e21 !important;
+            font-size: 16px !important;
+            font-weight: 600 !important;
+        }
+
+        .asset-direction {
+            font-size: 10px !important;
+            font-weight: 600 !important;
+            text-transform: uppercase !important;
+            padding: 2px 6px !important;
+            border-radius: 4px !important;
+        }
+
+        .direction-call {
+            background: #d1f2eb !important;
+            color: #42b883 !important;
+        }
+
+        .direction-put {
+            background: #fadbd8 !important;
+            color: #f02849 !important;
+        }
+
+        .operation-amount {
+            color: #1c1e21 !important;
+            font-size: 16px !important;
+            font-weight: 600 !important;
+        }
+
+        .operation-details {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr 1fr 1fr !important;
+            gap: 8px !important;
+            padding-top: 12px !important;
+            border-top: 1px solid #dadde1 !important;
+        }
+
+        .detail-item {
+            text-align: center !important;
+        }
+
+        .detail-value {
+            color: #1c1e21 !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            margin-bottom: 2px !important;
+        }
+
+        .detail-value.profit-positive {
+            color: #42b883 !important;
+        }
+
+        .detail-value.profit-negative {
+            color: #f02849 !important;
+        }
+
+        .detail-label {
+            color: #65676b !important;
+            font-size: 10px !important;
+            font-weight: 400 !important;
+            text-transform: uppercase !important;
+        }
+
+        /* ESTADO VACÍO */
+        .empty-state {
+            background: white !important;
+            border: 1px solid #dadde1 !important;
+            border-radius: 8px !important;
+            padding: 40px 20px !important;
+            text-align: center !important;
+            margin: 8px 16px !important;
+        }
+
+        .empty-icon {
+            color: #dadde1 !important;
+            font-size: 48px !important;
+            margin-bottom: 16px !important;
+        }
+
+        .empty-title {
+            color: #1c1e21 !important;
+            font-size: 18px !important;
+            font-weight: 600 !important;
+            margin-bottom: 8px !important;
+        }
+
+        .empty-message {
+            color: #65676b !important;
+            font-size: 14px !important;
+            margin-bottom: 20px !important;
+        }
+
+        /* PAGINACIÓN FIJA INFERIOR */
+        .pagination-footer {
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            background: white !important;
+            border-top: 1px solid #dadde1 !important;
+            padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+            z-index: 1000 !important;
+        }
+
+        .pagination-info {
+            text-align: center !important;
+            color: #65676b !important;
+            font-size: 12px !important;
+            margin-bottom: 8px !important;
+        }
+
+        .pagination-controls {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+
+        .page-btn {
+            background: white !important;
+            border: 1px solid #dadde1 !important;
+            border-radius: 6px !important;
+            color: #1c1e21 !important;
+            font-size: 12px !important;
+            font-weight: 500 !important;
+            padding: 6px 10px !important;
+            text-decoration: none !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .page-btn:hover {
+            background: #f0f2f5 !important;
+            color: #1c1e21 !important;
+            text-decoration: none !important;
+        }
+
+        .page-btn.active {
+            background: #1877f2 !important;
+            color: white !important;
+            border-color: #1877f2 !important;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+        }
+
+        /* RESPONSIVE PARA PANTALLAS PEQUEÑAS */
+        @media (max-width: 375px) {
+            .stats-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .operation-details {
+                grid-template-columns: 1fr 1fr !important;
+                gap: 12px !important;
+            }
+
+            .nav-title {
+                font-size: 18px !important;
+            }
+        }
+
+        /* ANIMACIONES SUAVES */
+        .operation-card {
+            animation: slideUp 0.3s ease !important;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0 !important;
+                transform: translateY(20px) !important;
+            }
+            to {
+                opacity: 1 !important;
+                transform: translateY(0) !important;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease !important;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0 !important; }
+            to { opacity: 1 !important; }
+        }
+
+        /* ESTADO DE CARGA */
+        .loading {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%) !important;
+            background-size: 200% 100% !important;
+            animation: loading 1.5s infinite !important;
+            border-radius: 4px !important;
+            height: 20px !important;
+            margin-bottom: 8px !important;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0 !important; }
+            100% { background-position: -200% 0 !important; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header con Logo y Navegación -->
+    <div class="header-container">
+        <div class="logo-container">
+            <img src="img/kali.logo.svg" alt="IQ Option">
+        </div>
+        
+        <div class="header-nav">
+            <h1 class="nav-title">Historial</h1>
+            <div class="nav-actions">
+                <a href="/historial?account=<%= accountType %>" class="nav-btn">
+                    <i class="fas fa-desktop"></i>
+                    Desktop
+                </a>
+                <a href="/" class="nav-btn logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Salir
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información de Cuenta -->
+    <div class="account-section">
+        <div class="account-header">
+            <div>
+                <div class="account-balance <%= accountType === 'PRACTICE' ? 'practice' : 'real' %>">
+                    $<%= balance.toLocaleString('es-ES', {minimumFractionDigits: 2}) %>
+                </div>
+                <div class="account-type">
+                    Cuenta <%= accountType === 'PRACTICE' ? 'de Práctica' : 'Real' %>
+                </div>
+            </div>
+        </div>
+        
+        <div class="account-toggle">
+            <a href="/historial-mobile?account=PRACTICE" 
+               class="toggle-btn <%= accountType === 'PRACTICE' ? 'active' : '' %>">
+                <i class="fas fa-graduation-cap"></i>
+                Demo
+            </a>
+            <a href="/historial-mobile?account=REAL" 
+               class="toggle-btn <%= accountType === 'REAL' ? 'active' : '' %>">
+                <i class="fas fa-dollar-sign"></i>
+                Real
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtros de Búsqueda -->
+    <div class="filters-section">
+        <div class="filters-header" onclick="toggleFilters()">
+            <div class="filters-title">
+                <i class="fas fa-filter"></i>
+                Filtros de Búsqueda
+            </div>
+            <i class="fas fa-chevron-down filters-icon" id="filterIcon"></i>
+        </div>
+        
+        <div class="filters-content" id="filtersContent">
+            <form method="POST" action="/filtrar">
+                <input type="hidden" name="account" value="<%= accountType %>">
+                
+                <div class="filter-group">
+                    <label class="filter-label">Fecha de inicio</label>
+                    <input type="date" name="fecha_inicio" class="filter-input" 
+                           value="<%= fechaInicio %>">
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Fecha de fin</label>
+                    <input type="date" name="fecha_fin" class="filter-input" 
+                           value="<%= fechaFin %>">
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Instrumento</label>
+                    <select name="instrumento" class="filter-select">
+                        <option value="all" <%= instrumento === 'all' ? 'selected' : '' %>>Todas</option>
+                        <option value="digital" <%= instrumento === 'digital' ? 'selected' : '' %>>Digital</option>
+                        <option value="binary" <%= instrumento === 'binary' ? 'selected' : '' %>>Binarias</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Resultado</label>
+                    <select name="resultado" class="filter-select">
+                        <option value="">Todos</option>
+                        <option value="win" <%= resultado === 'win' ? 'selected' : '' %>>WIN</option>
+                        <option value="loss" <%= resultado === 'loss' ? 'selected' : '' %>>LOSS</option>
+                    </select>
+                </div>
+
+                <div class="filter-buttons">
+                    <button type="submit" class="btn-filter">
+                        <i class="fas fa-search"></i>
+                        Filtrar
+                    </button>
+                    <a href="/historial-mobile?account=<%= accountType %>" class="btn-clear">
+                        <i class="fas fa-times"></i>
+                        Limpiar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Estadísticas del Período -->
+    <div class="stats-section fade-in">
+        <div class="stats-header">
+            <i class="fas fa-chart-line"></i>
+            Resumen del Período
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">$<%= totalInvestment %></div>
+                <div class="stat-label">Inversión Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value <%= parseFloat(totalProfit) >= 0 ? 'positive' : 'negative' %>">
+                    <%= parseFloat(totalProfit) >= 0 ? '+' : '' %>$<%= totalProfit %>
+                </div>
+                <div class="stat-label">Beneficio Bruto</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">$<%= totalCapitalRecuperado %></div>
+                <div class="stat-label">Capital Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value"><%= totalOperations %></div>
+                <div class="stat-label">Operaciones</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configuración de Visualización -->
+    <div class="operations-header">
+        <span class="operations-count">Total: <%= totalOperations %> operaciones</span>
+        <select class="page-size-selector" onchange="changePageSize(this.value)">
+            <option value="5" <%= perPage === 5 ? 'selected' : '' %>>5 por página</option>
+            <option value="10" <%= perPage === 10 ? 'selected' : '' %>>10 por página</option>
+            <option value="25" <%= perPage === 25 ? 'selected' : '' %>>25 por página</option>
+        </select>
+    </div>
+
+    <!-- Lista de Operaciones -->
+    <div class="operations-section">
+        <% if (historial && historial.length > 0) { %>
+            <% historial.forEach((op, index) => { %>
+                <div class="operation-card">
+                    <div class="operation-header">
+                        <div class="operation-date">
+                            <%= op.tiempo_compra || new Date(op.created * 1000).toLocaleString('es-ES') %>
+                        </div>
+                        <div class="operation-result <%= (op.resultado || op.result) === 'win' || (op.resultado || op.result) === 'Ganado' ? 'result-win' : 'result-loss' %>">
+                            <%= (op.resultado || op.result) === 'win' || (op.resultado || op.result) === 'Ganado' ? 'WIN' : 'LOSS' %>
+                        </div>
+                    </div>
+                    
+                    <div class="operation-body">
+                        <div class="operation-main">
+                            <div class="operation-asset">
+                                <div class="asset-name">
+                                    <%= (op.activo || op.instrument || op.active || 'N/A').replace('-op', '') %>
+                                </div>
+                                <div class="asset-direction <%= (op.direccion || op.direction) === 'put' ? 'direction-put' : 'direction-call' %>">
+                                    <%= (op.direccion || op.direction || 'CALL').toUpperCase() %>
+                                </div>
+                            </div>
+                            <div class="operation-amount">
+                                $<%= parseFloat(op.inversion || op.amount || 0).toFixed(2) %>
+                            </div>
+                        </div>
+
+                        <div class="operation-details">
+                            <div class="detail-item">
+                                <div class="detail-value <%= parseFloat(op.ganancia_bruta || op.profit || 0) >= 0 ? 'profit-positive' : 'profit-negative' %>">
+                                    <%= parseFloat(op.ganancia_bruta || op.profit || 0) >= 0 ? '+' : '' %>$<%= parseFloat(op.ganancia_bruta || op.profit || 0).toFixed(2) %>
+                                </div>
+                                <div class="detail-label">P/G</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">
+                                    $<%= parseFloat(op.capital || op.inversion || op.amount || 0).toFixed(2) %>
+                                </div>
+                                <div class="detail-label">Capital</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value <%= parseFloat(op.porcentaje || 0) >= 0 ? 'profit-positive' : 'profit-negative' %>">
+                                    <%= parseFloat(op.porcentaje || 0).toFixed(2) %>%
+                                </div>
+                                <div class="detail-label">Retorno</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">
+                                    <%= (op.tipo_instrumento || op.option_type || 'turbo').toUpperCase() %>
+                                </div>
+                                <div class="detail-label">Tipo</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="empty-title">Sin operaciones</div>
+                <div class="empty-message">
+                    No se encontraron operaciones para mostrar.<br>
+                    Intenta ajustar los filtros de búsqueda.
+                </div>
+                <a href="/historial-mobile?account=<%= accountType %>" class="btn-filter" style="display: inline-block; text-decoration: none; color: white; padding: 10px 20px;">
+                    <i class="fas fa-refresh"></i>
+                    Actualizar
+                </a>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Paginación Footer -->
+    <div class="pagination-footer">
+        <div class="pagination-info">
+            Página <%= currentPage %> de <%= totalPages %> • Mostrando <%= historial.length %> de <%= totalOperations %>
+        </div>
+        
+        <div class="pagination-controls">
+            <% if (pagination.hasPrev) { %>
+                <a href="/historial-mobile?account=<%= accountType %>&page=<%= pagination.prevPage %><% if (fechaInicio) { %>&fecha_inicio=<%= fechaInicio %><% } %><% if (fechaFin) { %>&fecha_fin=<%= fechaFin %><% } %><% if (instrumento && instrumento !== 'all') { %>&instrumento=<%= instrumento %><% } %><% if (resultado) { %>&resultado=<%= resultado %><% } %>" 
+                   class="page-btn">
+                    <i class="fas fa-chevron-left"></i>
+                    Anterior
+                </a>
+            <% } %>
+
+            <% for (let i = Math.max(1, currentPage - 1); i <= Math.min(totalPages, currentPage + 1); i++) { %>
+                <a href="/historial-mobile?account=<%= accountType %>&page=<%= i %><% if (fechaInicio) { %>&fecha_inicio=<%= fechaInicio %><% } %><% if (fechaFin) { %>&fecha_fin=<%= fechaFin %><% } %><% if (instrumento && instrumento !== 'all') { %>&instrumento=<%= instrumento %><% } %><% if (resultado) { %>&resultado=<%= resultado %><% } %>" 
+                   class="page-btn <%= i === currentPage ? 'active' : '' %>">
+                    <%= i %>
+                </a>
+            <% } %>
+
+            <% if (pagination.hasNext) { %>
+                <a href="/historial-mobile?account=<%= accountType %>&page=<%= pagination.nextPage %><% if (fechaInicio) { %>&fecha_inicio=<%= fechaInicio %><% } %><% if (fechaFin) { %>&fecha_fin=<%= fechaFin %><% } %><% if (instrumento && instrumento !== 'all') { %>&instrumento=<%= instrumento %><% } %><% if (resultado) { %>&resultado=<%= resultado %><% } %>" 
+                   class="page-btn">
+                    Siguiente
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            <% } %>
+        </div>
+    </div>
+
+    <script>
+        // Toggle de filtros
+        function toggleFilters() {
+            const content = document.getElementById('filtersContent');
+            const icon = document.getElementById('filterIcon');
+            
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                icon.classList.remove('open');
+            } else {
+                content.classList.add('show');
+                icon.classList.add('open');
+            }
+        }
+
+        // Cambiar tamaño de página
+        function changePageSize(size) {
+            const url = new URL(window.location);
+            url.searchParams.set('perPage', size);
+            url.searchParams.set('page', '1');
+            window.location.href = url.toString();
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Scroll suave al cargar
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Haptic feedback para dispositivos móviles
+            function triggerHaptic() {
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(10);
+                }
+            }
+
+            // Añadir haptic feedback a botones importantes
+            document.querySelectorAll('.btn-filter, .toggle-btn, .page-btn').forEach(btn => {
+                btn.addEventListener('click', triggerHaptic);
+            });
+
+            // Lazy loading para operaciones
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { rootMargin: '50px' });
+
+            document.querySelectorAll('.operation-card').forEach(card => {
+                observer.observe(card);
+            });
+
+            // Swipe gestures para paginación
+            let startX = 0;
+            let startY = 0;
+
+            document.addEventListener('touchstart', function(e) {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            });
+
+            document.addEventListener('touchend', function(e) {
+                if (!startX || !startY) return;
+
+                const endX = e.changedTouches[0].clientX;
+                const endY = e.changedTouches[0].clientY;
+                const diffX = startX - endX;
+                const diffY = startY - endY;
+
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                    if (diffX > 0) {
+                        // Swipe left - página siguiente
+                        const nextBtn = document.querySelector('.page-btn[href*="page=<%= pagination.nextPage %>"]');
+                        if (nextBtn) {
+                            triggerHaptic();
+                            nextBtn.click();
+                        }
+                    } else {
+                        // Swipe right - página anterior
+                        const prevBtn = document.querySelector('.page-btn[href*="page=<%= pagination.prevPage %>"]');
+                        if (prevBtn) {
+                            triggerHaptic();
+                            prevBtn.click();
+                        }
+                    }
+                }
+
+                startX = 0;
+                startY = 0;
+            });
+        });
+    </script>
+</body>
+
+</html>
