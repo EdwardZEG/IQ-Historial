@@ -6,7 +6,7 @@ const { requireAuth, requireGuest } = require('../middleware/auth');
 
 // Rutas principales
 router.get('/', requireGuest, authController.renderLogin);
-router.post('/login', authController.login);
+router.post('/login', authController.login); // SIN middleware para permitir el login
 router.get('/historial', requireAuth, historialController.renderHistorial);
 router.get('/historial-mobile', requireAuth, historialController.renderHistorialMobile);
 router.post('/filtrar', requireAuth, historialController.filtrarHistorial);

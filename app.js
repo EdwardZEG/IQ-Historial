@@ -18,15 +18,26 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: { 
-    secure: process.env.NODE_ENV === 'production', // HTTPS en producción
+    secure: process.env.VERCEL === '1' ? 'auto' : false, // Auto-detectar HTTPS en Vercel
     maxAge: 24 * 60 * 60 * 1000, // 24 horas
-    httpOnly: true // Protección XSS
+    httpOnly: true, // Protección XSS
+    sameSite: 'lax' // Compatibilidad con Vercel
   }
 }));
 
-// Middleware para logs
+// Middleware para logs y debug de sesiones
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  
+  // Debug de sesiones en desarrollo
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('🔑 Sesión:', {
+      sessionID: req.sessionID?.substring(0, 8) + '...',
+      user: req.session.user ? req.session.user.email : 'no-user',
+      cookies: req.headers.cookie ? 'present' : 'missing'
+    });
+  }
+  
   next();
 });
 
