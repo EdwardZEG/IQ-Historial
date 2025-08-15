@@ -33,14 +33,40 @@ class IQOptionAPI {
         this.balance = result.balance || 0;
         return result;
       } else if (!result.success) {
-        console.log('❌ [JS] Login real falló, usando fallback simulado');
+        console.log('❌ [JS] Login real falló');
+        
+        // EN PRODUCCIÓN: NO usar simulación, fallar directamente
+        if (process.env.NODE_ENV === 'production' || process.env.VERCEL === '1') {
+          console.log('🚫 [PRODUCCIÓN] No se permite simulación, fallando');
+          return {
+            success: false,
+            message: 'No se pudo conectar con IQ Option. Datos reales requeridos en producción.',
+            error: 'NO_REAL_CONNECTION'
+          };
+        }
+        
+        // Solo en desarrollo local: usar simulación
+        console.log('🔧 [LOCAL] Usando fallback simulado para desarrollo');
         return this.getSimulatedLogin();
       }
       
       return result;
       
     } catch (error) {
-      console.error('💥 [JS] Error en login real, activando modo simulado:', error.message);
+      console.error('💥 [JS] Error en login real:', error.message);
+      
+      // EN PRODUCCIÓN: NO usar simulación, fallar directamente
+      if (process.env.NODE_ENV === 'production' || process.env.VERCEL === '1') {
+        console.log('🚫 [PRODUCCIÓN] Error de conexión, no se permite simulación');
+        return {
+          success: false,
+          message: `Error de conexión con IQ Option: ${error.message}`,
+          error: 'CONNECTION_ERROR'
+        };
+      }
+      
+      // Solo en desarrollo local: usar simulación
+      console.log('🔧 [LOCAL] Error de conexión, usando simulación para desarrollo');
       return this.getSimulatedLogin();
     }
   }
@@ -142,12 +168,38 @@ class IQOptionAPI {
           estadisticas: this.calculateStats(result.history)
         };
       } else {
-        console.log('❌ [JS] Historial real falló o vacío, usando fallback simulado');
+        console.log('❌ [JS] Historial real falló o vacío');
+        
+        // EN PRODUCCIÓN: NO usar simulación, fallar directamente
+        if (process.env.NODE_ENV === 'production' || process.env.VERCEL === '1') {
+          console.log('🚫 [PRODUCCIÓN] No se permite simulación, fallando');
+          return {
+            success: false,
+            message: 'No se pudo obtener historial real de IQ Option. Datos reales requeridos en producción.',
+            error: 'NO_REAL_DATA'
+          };
+        }
+        
+        // Solo en desarrollo local: usar simulación
+        console.log('🔧 [LOCAL] Usando fallback simulado para desarrollo');
         return this.getSimulatedHistorial(accountType, fechaInicio, fechaFin, instrumento);
       }
       
     } catch (error) {
       console.error('💥 [JS] Error obteniendo historial real:', error.message);
+      
+      // EN PRODUCCIÓN: NO usar simulación, fallar directamente
+      if (process.env.NODE_ENV === 'production' || process.env.VERCEL === '1') {
+        console.log('🚫 [PRODUCCIÓN] Error obteniendo historial, no se permite simulación');
+        return {
+          success: false,
+          message: `Error obteniendo historial de IQ Option: ${error.message}`,
+          error: 'HISTORY_ERROR'
+        };
+      }
+      
+      // Solo en desarrollo local: usar simulación
+      console.log('🔧 [LOCAL] Error obteniendo historial, usando simulación para desarrollo');
       return this.getSimulatedHistorial(accountType, fechaInicio, fechaFin, instrumento);
     }
   }

@@ -37,8 +37,10 @@ exports.login = async (req, res) => {
         const isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile/i.test(userAgent);
         
         // Log del tipo de login
-        if (result.simulated) {
-          console.log('🎯 Login simulado exitoso para entorno de producción');
+        if (result.real) {
+          console.log('🎯 Login REAL exitoso con IQ Option');
+        } else if (result.simulated) {
+          console.log('🎯 Login simulado (solo en desarrollo local)');
         }
         
         console.log('💾 Sesión guardada exitosamente para:', email);
@@ -54,8 +56,16 @@ exports.login = async (req, res) => {
       });
     } else {
       console.log('❌ Login fallido para:', email, '- Error:', result?.error);
+      
+      // Mensaje específico para producción cuando no hay conexión real
+      let errorMessage = result?.message || 'Credenciales inválidas. Verifique su email y contraseña.';
+      
+      if (result?.error === 'NO_REAL_CONNECTION' || result?.error === 'CONNECTION_ERROR') {
+        errorMessage = 'No se pudo conectar con IQ Option. La aplicación requiere conexión real en producción. Verifique su conexión a internet e intente nuevamente.';
+      }
+      
       return res.render('login', { 
-        error: result?.error || 'Credenciales inválidas. Verifique su email y contraseña.',
+        error: errorMessage,
         message: null 
       });
     }
