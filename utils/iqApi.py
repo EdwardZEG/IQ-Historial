@@ -1,3 +1,9 @@
+import time
+import json
+import sys
+from datetime import datetime, timedelta
+import calendar
+
 try:
     from iqoptionapi.stable_api import IQ_Option
     IQOPTIONAPI_AVAILABLE = True
@@ -6,12 +12,6 @@ except ImportError:
     import requests
     IQOPTIONAPI_AVAILABLE = False
     print("⚠️ iqoptionapi no disponible - usando fallback Railway", file=sys.stderr)
-
-import time
-import json
-import sys
-from datetime import datetime, timedelta
-import calendar
 
 
 # Fallback simple si iqoptionapi no está disponible o falla
@@ -39,7 +39,11 @@ def simple_iq_login(email, password):
         )
 
         if response.status_code == 200 and response.json().get("isSuccessful"):
-            print(json.dumps({"success": True, "balance": response.json().get("balance", 0)}))
+            print(
+                json.dumps(
+                    {"success": True, "balance": response.json().get("balance", 0)}
+                )
+            )
         else:
             print(json.dumps({"success": False, "error": "Credenciales incorrectas"}))
 
@@ -50,25 +54,27 @@ def simple_iq_login(email, password):
 def generate_demo_history_fallback(count=123):
     """Genera historial demo para Railway cuando iqoptionapi no está disponible"""
     import random
-    
+
     history = []
     instruments = ["EURUSD-op", "GBPUSD-op", "USDJPY-op", "EURJPY-op"]
-    
+
     base_time = int(time.time())
-    
+
     for i in range(count):
         is_win = random.random() > 0.47  # 53% win rate similar a los datos reales
         amount = round(random.uniform(4, 130), 2)  # Rangos similares a los datos reales
-        
+
         if is_win:
             win_amount = round(amount * (1 + random.uniform(0.8, 0.9)), 2)
             result = "win"
         else:
             win_amount = 0
             result = "loss"
-        
-        operation_time = (base_time - (i * 1800) + random.randint(-900, 900))  # Distribuir en tiempo
-        
+
+        operation_time = (
+            base_time - (i * 1800) + random.randint(-900, 900)
+        )  # Distribuir en tiempo
+
         operation = {
             "id": [12000000000 + i, 12000000000 + i + 1],
             "active": random.choice(instruments),
@@ -84,9 +90,9 @@ def generate_demo_history_fallback(count=123):
             "option_type": "turbo",
             "client_platform_id": 82,
         }
-        
+
         history.append(operation)
-    
+
     return history
 
 
@@ -95,7 +101,7 @@ def login(email, password):
         # Usar fallback Railway - la función ya hace print del JSON
         simple_iq_login(email, password)
         return
-    
+
     try:
         Iq = IQ_Option(email, password)
         check, reason = Iq.connect()
@@ -130,11 +136,11 @@ def get_balance_and_history(
             "success": True,
             "balance": 788.87,  # Balance demo
             "operations": len(history_data),
-            "history": history_data
+            "history": history_data,
         }
         print(json.dumps(response))
         return
-    
+
     try:
         Iq = IQ_Option(email, password)
         check, reason = Iq.connect()
