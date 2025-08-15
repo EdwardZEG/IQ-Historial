@@ -4,14 +4,19 @@ const path = require('path');
 const fs = require('fs');
 const { IQOptionAPI } = require('./iqApiJS');
 
-// Detectar si estamos en Vercel o local
-const isVercel = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
+// Detectar si estamos en Vercel o producción
+const isVercel = process.env.VERCEL === '1';
+const isProduction = process.env.NODE_ENV === 'production';
 const pythonAvailable = fs.existsSync(path.join(__dirname, 'iqApi.py'));
 
+// Usar JavaScript si estamos en Vercel O en producción
+const useJavaScript = isVercel || isProduction;
+
 console.log('🔍 Configuración del sistema:');
-console.log(`- Entorno: ${isVercel ? 'Vercel/Producción' : 'Local'}`);
+console.log(`- VERCEL: ${isVercel ? '✅' : '❌'}`);
+console.log(`- NODE_ENV: ${process.env.NODE_ENV || 'undefined'}`);
 console.log(`- Python disponible: ${pythonAvailable ? '✅' : '❌'}`);
-console.log(`- Método a usar: ${!isVercel && pythonAvailable ? 'Python (real)' : 'JavaScript (simulado)'}`);
+console.log(`- Método a usar: ${useJavaScript ? 'JavaScript (simulado)' : 'Python (real)'}`);
 
 // Instancia global para reutilizar conexiones JavaScript
 let jsApiInstance = null;
@@ -171,7 +176,19 @@ async function getHistoryWithPython(email, password, accountType = 'PRACTICE', f
 // Función principal de login (híbrida)
 exports.loginIQOption = async (email, password) => {
   try {
-    if (!isVercel && pythonAvailable) {
+    if (useJavaScript) {
+      console.log('🌐 [JS] Iniciando login en modo producción/simulado para:', email);
+      const api = getJSAPIInstance();
+      const result = await api.login(email, password);
+      
+      if (result.success) {
+        console.log('✅ [JS] Login exitoso:', result.simulated ? '(modo simulado)' : '(conexión real)');
+      } else {
+        console.log('❌ [JS] Login fallido:', result.error);
+      }
+      
+      return result;
+    } else if (pythonAvailable) {
       console.log('🐍 [PYTHON] Iniciando login real para:', email);
       const result = await loginWithPython(email, password);
       
@@ -213,11 +230,11 @@ exports.obtenerHistorialIQOption = async (email, password, accountType = 'REAL',
       fechaInicio,
       fechaFin,
       instrumento,
-      method: !isVercel && pythonAvailable ? 'Python (real)' : 'JavaScript (simulado)'
+      method: useJavaScript ? 'JavaScript (simulado)' : 'Python (real)'
     });
     
-    if (!isVercel && pythonAvailable) {
-      console.log('🐍 [PYTHON] Obteniendo historial real...');
+    if (useJavaScript) {
+      console.log('🌐 [JS] Obteniendo historial simulado...');
       const result = await getHistoryWithPython(email, password, accountType, fechaInicio, fechaFin, instrumento);
       
       if (result.success) {
