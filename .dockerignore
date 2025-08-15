@@ -6,4 +6,5 @@ README.md
 .env
 .nyc_output
 coverage
-.docker*
+Dockerfile*
+.dockerignore
