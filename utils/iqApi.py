@@ -62,50 +62,56 @@ def simple_iq_login_requests(email, password):
 
 
 def generate_demo_history_fallback(count=123):
-    """Genera historial demo para Railway cuando iqoptionapi no está disponible"""
+    """Genera historial demo para Railway con estructura correcta para el frontend"""
     import random
-
+    
     history = []
-    instruments = ["EURUSD-op", "GBPUSD-op", "USDJPY-op", "EURJPY-op"]
-
+    instruments = ["EURUSD", "GBPUSD", "USDJPY", "EURJPY", "AUDCAD", "GBPJPY"]
+    
     base_time = int(time.time())
-
+    
     for i in range(count):
         is_win = random.random() > 0.47  # 53% win rate similar a los datos reales
         amount = round(random.uniform(4, 130), 2)  # Rangos similares a los datos reales
-
+        
         if is_win:
             win_amount = round(amount * (1 + random.uniform(0.8, 0.9)), 2)
-            result = "win"
+            ganancia = win_amount - amount
+            resultado = "Ganado"
+            capital = win_amount
         else:
             win_amount = 0
-            result = "loss"
-
-        operation_time = (
-            base_time - (i * 1800) + random.randint(-900, 900)
-        )  # Distribuir en tiempo
-
+            ganancia = -amount
+            resultado = "Perdido"
+            capital = 0
+        
+        operation_time = base_time - (i * 1800) + random.randint(-900, 900)
+        expired_time = operation_time + 300
+        
+        # Crear fecha formateada
+        fecha_obj = datetime.fromtimestamp(operation_time)
+        fecha_cierre_obj = datetime.fromtimestamp(expired_time)
+        
         operation = {
-            "id": [12000000000 + i, 12000000000 + i + 1],
-            "active": random.choice(instruments),
-            "active_id": 1861,
-            "amount": amount,
-            "exp_value": 1165650,
-            "expired": operation_time + 300,
+            "id": f"demo_{12000000000 + i}",
             "created": operation_time,
-            "created_millisecond": operation_time * 1000,
-            "win_amount": win_amount,
-            "count": 1,
-            "win": result,
-            "option_type": "turbo",
-            "client_platform_id": 82,
+            "expired": expired_time,
+            "activo": random.choice(instruments),
+            "inversion": amount,
+            "resultado": resultado,
+            "ganancia": ganancia,
+            "ganancia_bruta": win_amount,
+            "capital": capital,
+            "porcentaje": round((ganancia / amount) * 100, 2),
+            "tipo_instrumento": "turbo",
+            "tiempo_compra": fecha_obj.strftime("%d/%m/%Y %H:%M:%S"),
+            "tiempo_cierre": fecha_cierre_obj.strftime("%d/%m/%Y %H:%M:%S"),
+            "fecha_simple": fecha_obj.strftime("%d/%m/%Y")
         }
-
+        
         history.append(operation)
-
+    
     return history
-
-
 def login(email, password):
     if not IQOPTIONAPI_AVAILABLE:
         # Usar fallback Railway - la función ya hace print del JSON
