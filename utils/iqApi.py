@@ -10,11 +10,13 @@ IMPORT_ERROR_MSG = ""
 
 try:
     from iqoptionapi.stable_api import IQ_Option
+
     IQOPTIONAPI_AVAILABLE = True
     print("✅ iqoptionapi disponible - usando conexiones reales", file=sys.stderr)
 except ImportError as e:
     # Fallback: usar script Railway si iqoptionapi no está disponible
     import requests
+
     IQOPTIONAPI_AVAILABLE = False
     IMPORT_ERROR_MSG = str(e)
     print(f"⚠️ iqoptionapi no disponible: {str(e)}", file=sys.stderr)
@@ -25,16 +27,22 @@ except ImportError as e:
 def load_real_data_fallback():
     """Cargar datos reales exportados desde local"""
     import os
+
     try:
-        real_data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'real_data.json')
+        real_data_path = os.path.join(
+            os.path.dirname(__file__), "..", "data", "real_data.json"
+        )
         if os.path.exists(real_data_path):
-            with open(real_data_path, 'r', encoding='utf-8') as f:
+            with open(real_data_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                print(f"✅ [RAILWAY] Datos reales cargados desde export: {len(data.get('history', []))} operaciones", file=sys.stderr)
+                print(
+                    f"✅ [RAILWAY] Datos reales cargados desde export: {len(data.get('history', []))} operaciones",
+                    file=sys.stderr,
+                )
                 return data
     except Exception as e:
         print(f"⚠️ [RAILWAY] Error cargando datos reales: {str(e)}", file=sys.stderr)
-    
+
     return None
 
 
@@ -44,7 +52,7 @@ def simple_iq_login(email, password):
         # Intentar conexión real usando requests
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-            "Accept": "application/json", 
+            "Accept": "application/json",
             "Content-Type": "application/json",
             "Origin": "https://iqoption.com",
             "Referer": "https://iqoption.com/",
@@ -64,29 +72,45 @@ def simple_iq_login(email, password):
             timeout=10,
         )
 
-        print(f"🔍 [RAILWAY] Respuesta de login real: Status {response.status_code}", file=sys.stderr)
-        
+        print(
+            f"🔍 [RAILWAY] Respuesta de login real: Status {response.status_code}",
+            file=sys.stderr,
+        )
+
         if response.status_code == 200:
             data = response.json()
             if data.get("isSuccessful"):
                 balance = data.get("balance", 0)
-                print(f"✅ [RAILWAY] Login REAL exitoso - Balance: {balance}", file=sys.stderr)
+                print(
+                    f"✅ [RAILWAY] Login REAL exitoso - Balance: {balance}",
+                    file=sys.stderr,
+                )
                 print(json.dumps({"success": True, "balance": balance, "real": True}))
                 return
 
         # Si falla login real, intentar cargar datos exportados
         real_data = load_real_data_fallback()
         if real_data and email in ["ciberkali777iq@gmail.com", "relojfavor6@gmail.com"]:
-            print("✅ [RAILWAY] Usando datos reales exportados desde local", file=sys.stderr)
-            print(json.dumps({
-                "success": True, 
-                "balance": real_data.get("balance", 788.87), 
-                "real": "exported"
-            }))
+            print(
+                "✅ [RAILWAY] Usando datos reales exportados desde local",
+                file=sys.stderr,
+            )
+            print(
+                json.dumps(
+                    {
+                        "success": True,
+                        "balance": real_data.get("balance", 788.87),
+                        "real": "exported",
+                    }
+                )
+            )
             return
 
         # Último fallback a demo para usuarios conocidos
-        if email in ["ciberkali777iq@gmail.com", "relojfavor6@gmail.com"] and len(password) > 5:
+        if (
+            email in ["ciberkali777iq@gmail.com", "relojfavor6@gmail.com"]
+            and len(password) > 5
+        ):
             print("⚠️ [RAILWAY] Usando demo como último recurso", file=sys.stderr)
             print(json.dumps({"success": True, "balance": 788.87, "real": False}))
         else:
@@ -97,17 +121,25 @@ def simple_iq_login(email, password):
         # Fallback a datos exportados o demo
         real_data = load_real_data_fallback()
         if real_data and email in ["ciberkali777iq@gmail.com", "relojfavor6@gmail.com"]:
-            print("✅ [RAILWAY] Error de red - usando datos exportados", file=sys.stderr)
-            print(json.dumps({
-                "success": True, 
-                "balance": real_data.get("balance", 788.87), 
-                "real": "exported"
-            }))
+            print(
+                "✅ [RAILWAY] Error de red - usando datos exportados", file=sys.stderr
+            )
+            print(
+                json.dumps(
+                    {
+                        "success": True,
+                        "balance": real_data.get("balance", 788.87),
+                        "real": "exported",
+                    }
+                )
+            )
         elif email in ["ciberkali777iq@gmail.com", "relojfavor6@gmail.com"]:
             print("⚠️ [RAILWAY] Error total - usando demo", file=sys.stderr)
             print(json.dumps({"success": True, "balance": 788.87, "real": False}))
         else:
-            print(json.dumps({"success": False, "error": f"Error de conexión: {str(e)}"}))
+            print(
+                json.dumps({"success": False, "error": f"Error de conexión: {str(e)}"})
+            )
 
 
 def simple_iq_get_real_history(email, password):
@@ -141,7 +173,11 @@ def simple_iq_get_real_history(email, password):
         )
 
         if response.status_code == 200 and response.json().get("isSuccessful"):
-            print(json.dumps({"success": True, "balance": response.json().get("balance", 0)}))
+            print(
+                json.dumps(
+                    {"success": True, "balance": response.json().get("balance", 0)}
+                )
+            )
         else:
             print(json.dumps({"success": False, "error": "Credenciales incorrectas"}))
 
@@ -152,16 +188,16 @@ def simple_iq_get_real_history(email, password):
 def generate_demo_history_fallback(count=123):
     """Genera historial demo para Railway con estructura correcta para el frontend"""
     import random
-    
+
     history = []
     instruments = ["EURUSD", "GBPUSD", "USDJPY", "EURJPY", "AUDCAD", "GBPJPY"]
-    
+
     base_time = int(time.time())
-    
+
     for i in range(count):
         is_win = random.random() > 0.47  # 53% win rate similar a los datos reales
         amount = round(random.uniform(4, 130), 2)  # Rangos similares a los datos reales
-        
+
         if is_win:
             win_amount = round(amount * (1 + random.uniform(0.8, 0.9)), 2)
             ganancia = win_amount - amount
@@ -172,14 +208,14 @@ def generate_demo_history_fallback(count=123):
             ganancia = -amount
             resultado = "Perdido"
             capital = 0
-        
+
         operation_time = base_time - (i * 1800) + random.randint(-900, 900)
         expired_time = operation_time + 300
-        
+
         # Crear fecha formateada
         fecha_obj = datetime.fromtimestamp(operation_time)
         fecha_cierre_obj = datetime.fromtimestamp(expired_time)
-        
+
         operation = {
             "id": f"demo_{12000000000 + i}",
             "created": operation_time,
@@ -194,12 +230,14 @@ def generate_demo_history_fallback(count=123):
             "tipo_instrumento": "turbo",
             "tiempo_compra": fecha_obj.strftime("%d/%m/%Y %H:%M:%S"),
             "tiempo_cierre": fecha_cierre_obj.strftime("%d/%m/%Y %H:%M:%S"),
-            "fecha_simple": fecha_obj.strftime("%d/%m/%Y")
+            "fecha_simple": fecha_obj.strftime("%d/%m/%Y"),
         }
-        
+
         history.append(operation)
-    
+
     return history
+
+
 def login(email, password):
     if not IQOPTIONAPI_AVAILABLE:
         # Usar fallback Railway - la función ya hace print del JSON
@@ -235,7 +273,7 @@ def get_balance_and_history(
     if not IQOPTIONAPI_AVAILABLE:
         # Intentar obtener datos reales usando requests
         print("🔍 [RAILWAY] Intentando obtener datos reales...", file=sys.stderr)
-        
+
         try:
             # Intentar login y obtener datos reales
             headers = {
@@ -259,28 +297,34 @@ def get_balance_and_history(
                 headers=headers,
                 timeout=10,
             )
-            
+
             if response.status_code == 200 and response.json().get("isSuccessful"):
                 # Login exitoso - intentar obtener datos reales
                 data = response.json()
                 balance = data.get("balance", 788.87)
-                
-                print(f"✅ [RAILWAY] Conexión real exitosa - Balance: {balance}", file=sys.stderr)
-                
+
+                print(
+                    f"✅ [RAILWAY] Conexión real exitosa - Balance: {balance}",
+                    file=sys.stderr,
+                )
+
                 # Intentar usar datos reales exportados
                 real_data = load_real_data_fallback()
                 if real_data and real_data.get("history"):
-                    print(f"📊 [RAILWAY] Usando historial real exportado: {len(real_data['history'])} ops", file=sys.stderr)
+                    print(
+                        f"📊 [RAILWAY] Usando historial real exportado: {len(real_data['history'])} ops",
+                        file=sys.stderr,
+                    )
                     response_data = {
                         "success": True,
                         "balance": real_data.get("balance", balance),
                         "operations": len(real_data["history"]),
                         "history": real_data["history"],
-                        "real_connection": "exported"
+                        "real_connection": "exported",
                     }
                     print(json.dumps(response_data))
                     return
-                
+
                 # Fallback a demo con balance real
                 history_data = generate_demo_history_fallback(123)
                 response_data = {
@@ -288,30 +332,36 @@ def get_balance_and_history(
                     "balance": balance,
                     "operations": len(history_data),
                     "history": history_data,
-                    "real_connection": True
+                    "real_connection": True,
                 }
                 print(json.dumps(response_data))
                 return
             else:
-                print("⚠️ [RAILWAY] Login real falló - intentando datos exportados", file=sys.stderr)
-                
+                print(
+                    "⚠️ [RAILWAY] Login real falló - intentando datos exportados",
+                    file=sys.stderr,
+                )
+
         except Exception as e:
             print(f"⚠️ [RAILWAY] Error conexión real: {str(e)}", file=sys.stderr)
-        
+
         # Intentar datos reales exportados
         real_data = load_real_data_fallback()
         if real_data and real_data.get("history"):
-            print(f"✅ [RAILWAY] Usando datos reales exportados: {len(real_data['history'])} operaciones", file=sys.stderr)
+            print(
+                f"✅ [RAILWAY] Usando datos reales exportados: {len(real_data['history'])} operaciones",
+                file=sys.stderr,
+            )
             response_data = {
                 "success": True,
                 "balance": real_data.get("balance", 788.87),
                 "operations": len(real_data["history"]),
                 "history": real_data["history"],
-                "real_connection": "exported"
+                "real_connection": "exported",
             }
             print(json.dumps(response_data))
             return
-        
+
         # Fallback a demo realista
         print("📊 [RAILWAY] Usando historial demo realista", file=sys.stderr)
         history_data = generate_demo_history_fallback(123)
