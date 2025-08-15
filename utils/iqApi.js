@@ -34,6 +34,14 @@ function getPythonCmd() {
 }
 
 function getScriptPath() {
+  // En Railway, usar el script adaptado si existe, sino el original
+  const isRailway = process.env.RAILWAY_ENVIRONMENT_NAME || process.env.RAILWAY_PROJECT_NAME;
+  if (isRailway) {
+    const railwayScript = path.join(__dirname, 'iqApiRailway.py');
+    if (fs.existsSync(railwayScript)) {
+      return railwayScript;
+    }
+  }
   return path.join(__dirname, 'iqApi.py');
 }
 
