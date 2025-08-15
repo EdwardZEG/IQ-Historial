@@ -22,19 +22,34 @@ except ImportError as e:
 
 
 # Fallback simple si iqoptionapi no está disponible o falla
+def load_real_data_fallback():
+    """Cargar datos reales exportados desde local"""
+    import os
+    try:
+        real_data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'real_data.json')
+        if os.path.exists(real_data_path):
+            with open(real_data_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                print(f"✅ [RAILWAY] Datos reales cargados desde export: {len(data.get('history', []))} operaciones", file=sys.stderr)
+                return data
+    except Exception as e:
+        print(f"⚠️ [RAILWAY] Error cargando datos reales: {str(e)}", file=sys.stderr)
+    
+    return None
+
+
 def simple_iq_login(email, password):
-    """Login híbrido para Railway - intenta conexión real, fallback a demo"""
+    """Login híbrido para Railway - intenta real, luego datos exportados, luego demo"""
     try:
         # Intentar conexión real usando requests
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-            "Accept": "application/json",
+            "Accept": "application/json", 
             "Content-Type": "application/json",
             "Origin": "https://iqoption.com",
             "Referer": "https://iqoption.com/",
         }
 
-        # Intentar login real
         login_data = {
             "email": email,
             "password": password,
@@ -53,27 +68,43 @@ def simple_iq_login(email, password):
         
         if response.status_code == 200:
             data = response.json()
-            print(f"🔍 [RAILWAY] Data recibida: {data.get('isSuccessful', False)}", file=sys.stderr)
-            
             if data.get("isSuccessful"):
-                # Conexión real exitosa
                 balance = data.get("balance", 0)
-                print(f"✅ [RAILWAY] Login real exitoso - Balance: {balance}", file=sys.stderr)
+                print(f"✅ [RAILWAY] Login REAL exitoso - Balance: {balance}", file=sys.stderr)
                 print(json.dumps({"success": True, "balance": balance, "real": True}))
                 return
 
-        # Si falla el login real, usar demo para usuarios conocidos
+        # Si falla login real, intentar cargar datos exportados
+        real_data = load_real_data_fallback()
+        if real_data and email in ["ciberkali777iq@gmail.com", "relojfavor6@gmail.com"]:
+            print("✅ [RAILWAY] Usando datos reales exportados desde local", file=sys.stderr)
+            print(json.dumps({
+                "success": True, 
+                "balance": real_data.get("balance", 788.87), 
+                "real": "exported"
+            }))
+            return
+
+        # Último fallback a demo para usuarios conocidos
         if email in ["ciberkali777iq@gmail.com", "relojfavor6@gmail.com"] and len(password) > 5:
-            print("⚠️ [RAILWAY] Login real falló - usando demo realista", file=sys.stderr)
+            print("⚠️ [RAILWAY] Usando demo como último recurso", file=sys.stderr)
             print(json.dumps({"success": True, "balance": 788.87, "real": False}))
         else:
             print(json.dumps({"success": False, "error": "Credenciales incorrectas"}))
 
     except Exception as e:
         print(f"❌ [RAILWAY] Error en login: {str(e)}", file=sys.stderr)
-        # Fallback final a demo para usuarios conocidos
-        if email in ["ciberkali777iq@gmail.com", "relojfavor6@gmail.com"] and len(password) > 5:
-            print("⚠️ [RAILWAY] Error de conexión - usando demo", file=sys.stderr)
+        # Fallback a datos exportados o demo
+        real_data = load_real_data_fallback()
+        if real_data and email in ["ciberkali777iq@gmail.com", "relojfavor6@gmail.com"]:
+            print("✅ [RAILWAY] Error de red - usando datos exportados", file=sys.stderr)
+            print(json.dumps({
+                "success": True, 
+                "balance": real_data.get("balance", 788.87), 
+                "real": "exported"
+            }))
+        elif email in ["ciberkali777iq@gmail.com", "relojfavor6@gmail.com"]:
+            print("⚠️ [RAILWAY] Error total - usando demo", file=sys.stderr)
             print(json.dumps({"success": True, "balance": 788.87, "real": False}))
         else:
             print(json.dumps({"success": False, "error": f"Error de conexión: {str(e)}"}))
@@ -236,7 +267,21 @@ def get_balance_and_history(
                 
                 print(f"✅ [RAILWAY] Conexión real exitosa - Balance: {balance}", file=sys.stderr)
                 
-                # Por ahora usar demo con balance real hasta implementar API completa
+                # Intentar usar datos reales exportados
+                real_data = load_real_data_fallback()
+                if real_data and real_data.get("history"):
+                    print(f"📊 [RAILWAY] Usando historial real exportado: {len(real_data['history'])} ops", file=sys.stderr)
+                    response_data = {
+                        "success": True,
+                        "balance": real_data.get("balance", balance),
+                        "operations": len(real_data["history"]),
+                        "history": real_data["history"],
+                        "real_connection": "exported"
+                    }
+                    print(json.dumps(response_data))
+                    return
+                
+                # Fallback a demo con balance real
                 history_data = generate_demo_history_fallback(123)
                 response_data = {
                     "success": True,
@@ -248,10 +293,24 @@ def get_balance_and_history(
                 print(json.dumps(response_data))
                 return
             else:
-                print("⚠️ [RAILWAY] Login real falló - usando demo", file=sys.stderr)
+                print("⚠️ [RAILWAY] Login real falló - intentando datos exportados", file=sys.stderr)
                 
         except Exception as e:
             print(f"⚠️ [RAILWAY] Error conexión real: {str(e)}", file=sys.stderr)
+        
+        # Intentar datos reales exportados
+        real_data = load_real_data_fallback()
+        if real_data and real_data.get("history"):
+            print(f"✅ [RAILWAY] Usando datos reales exportados: {len(real_data['history'])} operaciones", file=sys.stderr)
+            response_data = {
+                "success": True,
+                "balance": real_data.get("balance", 788.87),
+                "operations": len(real_data["history"]),
+                "history": real_data["history"],
+                "real_connection": "exported"
+            }
+            print(json.dumps(response_data))
+            return
         
         # Fallback a demo realista
         print("📊 [RAILWAY] Usando historial demo realista", file=sys.stderr)
