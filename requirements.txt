@@ -1,3 +1,4 @@
-iqoptionapi==4.3.0
+iqoptionapi>=6.8.0
 websocket-client>=1.0.0
 requests>=2.25.0
+pylint>=2.0.0
