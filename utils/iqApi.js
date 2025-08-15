@@ -4,19 +4,24 @@ const path = require('path');
 const fs = require('fs');
 const { IQOptionAPI } = require('./iqApiJS');
 
-// Detectar si estamos en Vercel o producción
+// Detectar si estamos en Vercel, Railway o producción
 const isVercel = process.env.VERCEL === '1';
+const isRailway = process.env.RAILWAY_ENVIRONMENT_NAME || process.env.RAILWAY_PROJECT_NAME;
 const isProduction = process.env.NODE_ENV === 'production';
 const pythonAvailable = fs.existsSync(path.join(__dirname, 'iqApi.py'));
 
-// Usar JavaScript si estamos en Vercel O en producción
-const useJavaScript = isVercel || isProduction;
+// Usar JavaScript SOLO en Vercel (no en Railway aunque esté en producción)
+const useJavaScript = isVercel && !isRailway;
 
 console.log('🔍 Configuración del sistema:');
 console.log(`- VERCEL: ${isVercel ? '✅' : '❌'}`);
+console.log(`- RAILWAY: ${isRailway ? '✅' : '❌'}`);
 console.log(`- NODE_ENV: ${process.env.NODE_ENV || 'undefined'}`);
 console.log(`- Python disponible: ${pythonAvailable ? '✅' : '❌'}`);
 console.log(`- Método a usar: ${useJavaScript ? 'JavaScript (simulado)' : 'Python (real)'}`);
+if (isRailway) {
+  console.log('🚄 Railway detectado - usando Python para conexiones reales');
+}
 
 // Instancia global para reutilizar conexiones JavaScript
 let jsApiInstance = null;
