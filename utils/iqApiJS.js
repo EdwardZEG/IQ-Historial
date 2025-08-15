@@ -1,6 +1,7 @@
 const WebSocket = require('ws');
 const https = require('https');
 const axios = require('axios');
+const IQOptionRealAPI = require('./iqApiReal');
 
 class IQOptionAPI {
   constructor() {
@@ -16,76 +17,43 @@ class IQOptionAPI {
     this.cookies = '';
     this.balance = 0;
     this.isConnected = false;
+    this.realAPI = new IQOptionRealAPI();
   }
 
   async login(email, password) {
     try {
-      console.log('🔐 [VERCEL] Intentando login simulado para producción...');
+      console.log('🔐 [JS] Intentando login REAL con nueva API...');
       
-      // En producción en Vercel, usar siempre modo simulado
-      if (process.env.NODE_ENV === 'production' || process.env.VERCEL === '1') {
-        console.log('🌐 Modo producción detectado - usando datos simulados');
+      // Usar la nueva API real
+      const result = await this.realAPI.login(email, password);
+      
+      if (result.success && result.real) {
+        console.log('✅ [JS] Login REAL exitoso con nueva API');
         this.isConnected = true;
-        this.balance = 10000;
-        return { 
-          success: true, 
-          message: 'Login exitoso (modo demo)',
-          balance: 10000,
-          simulated: true
-        };
+        this.balance = result.balance || 0;
+        return result;
+      } else if (!result.success) {
+        console.log('❌ [JS] Login real falló, usando fallback simulado');
+        return this.getSimulatedLogin();
       }
-
-      // Solo intentar conexión real en desarrollo
-      const loginData = {
-        email: email,
-        password: password,
-        remember: 1,
-        platform: 'web'
-      };
-
-      const response = await axios.post(`${this.apiUrl}/login`, loginData, {
-        headers: this.headers,
-        withCredentials: true,
-        timeout: parseInt(process.env.HTTP_TIMEOUT) || 10000 // Timeout más corto
-      });
-
-      if (response.data && response.data.isSuccessful) {
-        if (response.headers['set-cookie']) {
-          this.cookies = response.headers['set-cookie'].join('; ');
-          this.headers['Cookie'] = this.cookies;
-        }
-        
-        console.log('✅ Login exitoso con IQ Option');
-        this.isConnected = true;
-        return { 
-          success: true, 
-          message: 'Login successful',
-          balance: response.data.balance || 0
-        };
-      } else {
-        console.log('❌ Login fallido, usando modo simulado');
-        this.isConnected = true;
-        this.balance = 10000;
-        return { 
-          success: true, 
-          message: 'Login exitoso (modo demo)',
-          balance: 10000,
-          simulated: true
-        };
-      }
+      
+      return result;
+      
     } catch (error) {
-      console.error('💥 Error en login, activando modo simulado:', error.message);
-      
-      // SIEMPRE devolver éxito en modo simulado
-      this.isConnected = true;
-      this.balance = 10000;
-      return { 
-        success: true, 
-        message: 'Login exitoso (modo demo)',
-        balance: 10000,
-        simulated: true
-      };
+      console.error('💥 [JS] Error en login real, activando modo simulado:', error.message);
+      return this.getSimulatedLogin();
     }
+  }
+
+  getSimulatedLogin() {
+    this.isConnected = true;
+    this.balance = 10000;
+    return { 
+      success: true, 
+      message: 'Login exitoso (modo demo - fallback)',
+      balance: 10000,
+      simulated: true
+    };
   }
 
   async getBalance() {
@@ -158,61 +126,63 @@ class IQOptionAPI {
 
   async getHistorial(email, password, accountType = 'REAL', fechaInicio = null, fechaFin = null, instrumento = 'all') {
     try {
-      console.log('📊 [VERCEL] Obteniendo historial...', { accountType, fechaInicio, fechaFin, instrumento });
+      console.log('📊 [JS] Obteniendo historial con nueva API REAL...');
       
-      // En producción siempre usar datos simulados
-      if (process.env.NODE_ENV === 'production' || process.env.VERCEL === '1' || !this.isConnected) {
-        console.log('🔄 Generando historial simulado para producción...');
-        const simulatedHistory = this.generateSimulatedHistory(120);
-        
-        let filteredHistory = simulatedHistory;
-        
-        // Filtrar por fechas si se especifican
-        if (fechaInicio || fechaFin) {
-          const startDate = fechaInicio ? new Date(fechaInicio + 'T00:00:00').getTime() / 1000 : 0;
-          const endDate = fechaFin ? new Date(fechaFin + 'T23:59:59').getTime() / 1000 : Date.now() / 1000;
-          
-          filteredHistory = filteredHistory.filter(op => 
-            op.created >= startDate && op.created <= endDate
-          );
-        }
-        
-        // Filtrar por instrumento
-        if (instrumento && instrumento !== 'all') {
-          filteredHistory = filteredHistory.filter(op => 
-            op.activo.toLowerCase().includes(instrumento.toLowerCase())
-          );
-        }
-        
+      // Usar la nueva API real primero
+      const result = await this.realAPI.getHistorial(email, password, accountType, fechaInicio, fechaFin, instrumento);
+      
+      if (result.success && result.real && result.history?.length > 0) {
+        console.log('✅ [JS] Historial REAL obtenido:', result.history.length, 'operaciones');
         return {
           success: true,
-          history: filteredHistory,
-          balance: 10000,
-          account_type: accountType,
-          simulated: true,
-          estadisticas: this.calculateStats(filteredHistory)
+          history: result.history,
+          balance: result.balance,
+          account_type: result.account_type,
+          real: true,
+          estadisticas: this.calculateStats(result.history)
         };
+      } else {
+        console.log('❌ [JS] Historial real falló o vacío, usando fallback simulado');
+        return this.getSimulatedHistorial(accountType, fechaInicio, fechaFin, instrumento);
       }
       
-      // Aquí iría la lógica real de obtención de historial
-      // Por ahora retornamos datos simulados
-      const simulatedHistory = this.generateSimulatedHistory(80);
-      
-      return {
-        success: true,
-        history: simulatedHistory,
-        balance: this.balance || 10000,
-        account_type: accountType,
-        estadisticas: this.calculateStats(simulatedHistory)
-      };
-      
     } catch (error) {
-      console.error('💥 Error obteniendo historial:', error.message);
-      return { 
-        success: false, 
-        error: `Error obteniendo historial: ${error.message}` 
-      };
+      console.error('💥 [JS] Error obteniendo historial real:', error.message);
+      return this.getSimulatedHistorial(accountType, fechaInicio, fechaFin, instrumento);
     }
+  }
+
+  getSimulatedHistorial(accountType = 'REAL', fechaInicio = null, fechaFin = null, instrumento = 'all') {
+    console.log('🔄 Generando historial simulado como fallback...');
+    const simulatedHistory = this.generateSimulatedHistory(120);
+    
+    let filteredHistory = simulatedHistory;
+      
+    // Filtrar por fechas si se especifican
+    if (fechaInicio || fechaFin) {
+      const startDate = fechaInicio ? new Date(fechaInicio + 'T00:00:00').getTime() / 1000 : 0;
+      const endDate = fechaFin ? new Date(fechaFin + 'T23:59:59').getTime() / 1000 : Date.now() / 1000;
+      
+      filteredHistory = filteredHistory.filter(op => 
+        op.created >= startDate && op.created <= endDate
+      );
+    }
+    
+    // Filtrar por instrumento
+    if (instrumento && instrumento !== 'all') {
+      filteredHistory = filteredHistory.filter(op => 
+        op.activo.toLowerCase().includes(instrumento.toLowerCase())
+      );
+    }
+    
+    return {
+      success: true,
+      history: filteredHistory,
+      balance: this.balance || 10000,
+      account_type: accountType,
+      simulated: true,
+      estadisticas: this.calculateStats(filteredHistory)
+    };
   }
 
   calculateStats(history) {
