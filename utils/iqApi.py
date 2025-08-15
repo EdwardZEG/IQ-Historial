@@ -5,7 +5,7 @@ except ImportError:
     # Fallback: usar script Railway si iqoptionapi no está disponible
     import requests
     IQOPTIONAPI_AVAILABLE = False
-    print("⚠️ iqoptionapi no disponible - usando fallback Railway")
+    print("⚠️ iqoptionapi no disponible - usando fallback Railway", file=sys.stderr)
 
 import time
 import json
@@ -92,8 +92,9 @@ def generate_demo_history_fallback(count=123):
 
 def login(email, password):
     if not IQOPTIONAPI_AVAILABLE:
-        # Usar fallback Railway
-        return simple_iq_login(email, password)
+        # Usar fallback Railway - la función ya hace print del JSON
+        simple_iq_login(email, password)
+        return
     
     try:
         Iq = IQ_Option(email, password)
