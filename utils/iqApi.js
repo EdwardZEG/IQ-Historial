@@ -234,22 +234,7 @@ exports.obtenerHistorialIQOption = async (email, password, accountType = 'REAL',
     });
     
     if (useJavaScript) {
-      console.log('🌐 [JS] Obteniendo historial simulado...');
-      const result = await getHistoryWithPython(email, password, accountType, fechaInicio, fechaFin, instrumento);
-      
-      if (result.success) {
-        console.log('✅ [PYTHON] Historial obtenido:', {
-          operaciones: result.history?.length || 0,
-          balance: result.balance,
-          real: true
-        });
-      } else {
-        console.log('❌ [PYTHON] Error obteniendo historial:', result.error);
-      }
-      
-      return result;
-    } else {
-      console.log('🔍 [JS] Obteniendo historial simulado...');
+      console.log('🌐 [JS] Obteniendo historial simulado para producción...');
       const api = getJSAPIInstance();
       const result = await api.getHistorial(email, password, accountType, fechaInicio, fechaFin, instrumento);
       
@@ -264,6 +249,26 @@ exports.obtenerHistorialIQOption = async (email, password, accountType = 'REAL',
       }
       
       return result;
+    } else if (pythonAvailable) {
+      console.log('� [PYTHON] Obteniendo historial real...');
+      const result = await getHistoryWithPython(email, password, accountType, fechaInicio, fechaFin, instrumento);
+      
+      if (result.success) {
+        console.log('✅ [PYTHON] Historial obtenido:', {
+          operaciones: result.history?.length || 0,
+          balance: result.balance,
+          real: true
+        });
+      } else {
+        console.log('❌ [PYTHON] Error obteniendo historial:', result.error);
+      }
+      
+      return result;
+    } else {
+      // Fallback a JavaScript si no hay Python disponible
+      console.log('⚠️ [FALLBACK] Python no disponible, usando JavaScript');
+      const api = getJSAPIInstance();
+      return await api.getHistorial(email, password, accountType, fechaInicio, fechaFin, instrumento);
     }
   } catch (error) {
     console.error('💥 Error obteniendo historial:', error.message);
