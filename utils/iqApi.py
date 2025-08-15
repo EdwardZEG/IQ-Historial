@@ -4,14 +4,21 @@ import sys
 from datetime import datetime, timedelta
 import calendar
 
+# Verificar disponibilidad de iqoptionapi con mejor detección
+IQOPTIONAPI_AVAILABLE = False
+IMPORT_ERROR_MSG = ""
+
 try:
     from iqoptionapi.stable_api import IQ_Option
     IQOPTIONAPI_AVAILABLE = True
-except ImportError:
+    print("✅ iqoptionapi disponible - usando conexiones reales", file=sys.stderr)
+except ImportError as e:
     # Fallback: usar script Railway si iqoptionapi no está disponible
     import requests
     IQOPTIONAPI_AVAILABLE = False
-    print("⚠️ iqoptionapi no disponible - usando fallback Railway", file=sys.stderr)
+    IMPORT_ERROR_MSG = str(e)
+    print(f"⚠️ iqoptionapi no disponible: {str(e)}", file=sys.stderr)
+    print("🔄 Usando sistema fallback con requests", file=sys.stderr)
 
 
 # Fallback simple si iqoptionapi no está disponible o falla

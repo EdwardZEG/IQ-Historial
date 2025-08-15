@@ -18,14 +18,17 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install Node.js dependencies
-RUN npm install
-
-# Copy Python requirements
+# Copy Python requirements first for better caching
 COPY requirements.txt ./
 
-# Install Python dependencies
-RUN pip3 install -r requirements.txt
+# Install Python dependencies with more robust error handling
+RUN pip3 install --no-cache-dir --upgrade pip && \
+    pip3 install --no-cache-dir -r requirements.txt || \
+    (echo "Warning: Some Python packages failed to install, continuing..." && \
+     pip3 install --no-cache-dir requests websocket-client aiohttp urllib3 certifi)
+
+# Install Node.js dependencies
+RUN npm install
 
 # Copy application code
 COPY . .
