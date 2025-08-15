@@ -17,7 +17,7 @@ def login(email, password):
                 json.dumps(
                     {
                         "success": False,
-                        "error": "Credenciales incorrectas o problema de conexión",
+                        "error": "Credenciales incorrectas<br>o problema de conexión",
                     }
                 )
             )
@@ -41,7 +41,7 @@ def get_balance_and_history(
                 json.dumps(
                     {
                         "success": False,
-                        "error": "Credenciales incorrectas o problema de conexión",
+                        "error": "Credenciales incorrectas<br>o problema de conexión",
                     }
                 )
             )

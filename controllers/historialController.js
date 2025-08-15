@@ -2,7 +2,7 @@ const { obtenerHistorialIQOption } = require('../utils/iqApi');
 
 exports.renderHistorial = async (req, res) => {
   if (!req.session.user) return res.redirect('/');
-  const accountType = req.query.account || 'PRACTICE';
+  const accountType = req.query.account || 'REAL';
   const instrumento = req.query.instrumento || 'all';
   const fecha_inicio = req.query.fecha_inicio;
   const fecha_fin = req.query.fecha_fin;
@@ -229,7 +229,7 @@ exports.filtrarHistorial = async (req, res) => {
   if (!req.session.user) return res.redirect('/');
   
   // Construir URL de redirección con parámetros
-  const accountType = req.body.account || req.query.account || 'PRACTICE';
+  const accountType = req.body.account || req.query.account || 'REAL';
   const instrumento = req.body.instrumento || req.query.instrumento || 'all';
   const fecha_inicio = req.body.fecha_inicio || req.query.fecha_inicio;
   const fecha_fin = req.body.fecha_fin || req.query.fecha_fin;
@@ -259,14 +259,11 @@ exports.filtrarHistorial = async (req, res) => {
 
 // NUEVO: Renderizar historial mobile con filtros por defecto
 exports.renderHistorialMobile = async (req, res) => {
-  // Datos de prueba temporal si no hay usuario autenticado
+  // SEGURIDAD: Redirigir al login si no hay usuario autenticado
   if (!req.session.user) {
-    req.session.user = {
-      email: 'ciberkali777iq@gmail.com',
-      password: 'zaldivar1234'
-    };
+    return res.redirect('/');
   }
-  const accountType = req.query.account || 'PRACTICE';
+  const accountType = req.query.account || 'REAL';
   const instrumento = req.query.instrumento || 'all';
   
   // Establecer fechas por defecto: desde abril 2025 si no se especifica otra cosa

@@ -340,7 +340,7 @@
         }
 
         .stat-card.operations .stat-value {
-            color: #0066cc;
+            color: rgb(7, 10, 243);
         }
 
         .stat-card.wins .stat-value {
@@ -696,6 +696,16 @@
             font-weight: bold;
             font-size: 16px;
             color: #1c1e21;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .currency-icon {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            flex-shrink: 0;
         }
 
         .operation-result {
@@ -748,6 +758,9 @@
         .loading i {
             font-size: 32px;
             color: #6c757d;
+        }
+
+        .loading i.fa-spinner {
             animation: spin 1s linear infinite;
         }
 
@@ -932,43 +945,48 @@
                 <div class="stat-label">Total Invertido</div>
             </div>
 
-            <div class="stat-card <%= (parseFloat(totalProfit) || 0) >= 0 ? 'profit' : 'loss' %>">
-                <div class="stat-value" id="totalProfit">
-                    $<%= (parseFloat(totalProfit) || 0).toFixed(2) %>
-                </div>
-                <div class="stat-label">Ganancia Total</div>
-            </div>
-
-            <div class="stat-card wins">
-                <div class="stat-value" id="totalWinsLossesDraws">
-                    <span style="color: #28a745; font-weight: bold;">
-                        <%= parseInt(totalWins) || 0 %>
-                    </span>
-                    <span style="color: #6c757d; font-weight: normal; margin: 0 4px;">-</span>
-                    <span style="color: #dc3545; font-weight: bold;">
-                        <%= parseInt(totalLosses) || 0 %>
-                    </span>
-                    <% if (parseInt(totalDraws)> 0) { %>
-                        <span style="color: #6c757d; font-weight: normal; margin: 0 4px;">-</span>
-                        <span style="color: #ffc107; font-weight: bold;">
-                            <%= parseInt(totalDraws) || 0 %>
-                        </span>
-                        <% } %>
-                </div>
-                <div class="stat-label">
-                    <% if (parseInt(totalDraws)> 0) { %>
-                        Ganadas - Perdidas - Empate
-                        <% } else { %>
-                            Ganadas - Perdidas
-                            <% } %>
-                </div>
-            </div>
-
             <div class="stat-card operations">
                 <div class="stat-value" id="totalOperations">
                     <%= parseInt(totalOperations) || 0 %>
                 </div>
                 <div class="stat-label">Total Operaciones</div>
+            </div>
+
+            <div class="stat-card wins">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="stat-value" id="totalWinsLossesDraws" style="margin-bottom: 8px;">
+                        <span style="color: #333; font-weight: bold;">
+                            <%= parseInt(totalWins) || 0 %>
+                        </span>
+                        <span style="color: #6c757d; font-weight: normal; margin: 0 4px;">-</span>
+                        <span style="color: #333; font-weight: bold;">
+                            <%= parseInt(totalLosses) || 0 %>
+                        </span>
+                        <% if (parseInt(totalDraws)> 0) { %>
+                            <span style="color: #6c757d; font-weight: normal; margin: 0 4px;">-</span>
+                            <span style="color: #333; font-weight: bold;">
+                                <%= parseInt(totalDraws) || 0 %>
+                            </span>
+                            <% } %>
+                    </div>
+                    <div style="display: flex; align-items: center; font-size: 16px;">
+                        <% if (parseInt(totalDraws)> 0) { %>
+                            <i class="fas fa-check" style="color: #28a745; margin-right: 25px;"></i>
+                            <i class="fas fa-times" style="color: #dc3545; margin-right: 25px;"></i>
+                            <i class="fas fa-equals" style="color: #ffc107;"></i>
+                            <% } else { %>
+                                <i class="fas fa-check" style="color: #28a745; margin-right: 35px;"></i>
+                                <i class="fas fa-times" style="color: #dc3545;"></i>
+                                <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card <%= (parseFloat(totalProfit) || 0) >= 0 ? 'profit' : 'loss' %>">
+                <div class="stat-value" id="totalProfit">
+                    $<%= (parseFloat(totalProfit) || 0).toFixed(2) %>
+                </div>
+                <div class="stat-label">Ganancia Total</div>
             </div>
         </div>
     </div>
@@ -991,66 +1009,6 @@
     <div class="content">
         <!-- Real Tab -->
         <div class="tab-content active" id="real-content">
-            <% if (typeof historial !=='undefined' && historial && historial.length> 0) { %>
-                <div class="operations-list">
-                    <% historial.forEach(function(operation) { %>
-                        <div class="operation-item">
-                            <div class="operation-header">
-                                <div class="operation-asset">
-                                    <i class="fas fa-chart-line"></i>
-                                    <%= operation.activo || operation.instrument_id || 'N/A' %>
-                                </div>
-                                <div
-                                    class="operation-result <%= 
-                                        (operation.resultado === 'Ganado' || operation.result === 'win') ? 'win' : 
-                                        (operation.resultado === 'Empate' || operation.result === 'draw') ? 'draw' : 'loss' %>">
-                                    <%= (operation.resultado==='Ganado' || operation.result==='win' ) ? 'GANÓ' :
-                                        (operation.resultado==='Empate' || operation.result==='draw' ) ? 'EMPATE'
-                                        : 'PERDIÓ' %>
-                                </div>
-                            </div>
-                            <div class="operation-details">
-                                <div class="operation-detail">
-                                    <span><i class="fas fa-coins"></i> Inversión:</span>
-                                    <span>$<%= parseFloat(operation.inversion || operation.amount || 0).toFixed(2) %>
-                                    </span>
-                                </div>
-                                <div class="operation-detail">
-                                    <span><i class="fas fa-trophy"></i> Ganancia:</span>
-                                    <span
-                                        class="<%= 
-                                            (operation.resultado === 'Ganado' || operation.result === 'win') ? 'profit' : 
-                                            (operation.resultado === 'Empate' || operation.result === 'draw') ? 'draw' : 'loss' %>">
-                                        $<%= parseFloat(operation.ganancia || operation.profit || 0).toFixed(2) %>
-                                    </span>
-                                </div>
-                                <div class="operation-detail">
-                                    <span><i class="fas fa-clock"></i> Hora:</span>
-                                    <span>
-                                        <%= operation.duracion || operation.hora_apertura || 'N/A' %>
-                                    </span>
-                                </div>
-                                <div class="operation-detail">
-                                    <span><i class="fas fa-calendar-alt"></i> Fecha:</span>
-                                    <span>
-                                        <%= operation.fecha_apertura || new Date(operation.created *
-                                            1000).toLocaleDateString('es-ES') %>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <% }); %>
-                </div>
-                <% } else { %>
-                    <div class="loading">
-                        <i class="fas fa-chart-bar"></i>
-                        <div style="margin-top: 16px;">No hay operaciones disponibles</div>
-                    </div>
-                    <% } %>
-        </div>
-
-        <!-- Practice Tab -->
-        <div class="tab-content" id="practice-content">
             <% if (accountType==='REAL' ) { %>
                 <% if (typeof historial !=='undefined' && historial && historial.length> 0) { %>
                     <div class="operations-list">
@@ -1058,8 +1016,16 @@
                             <div class="operation-item">
                                 <div class="operation-header">
                                     <div class="operation-asset">
-                                        <i class="fas fa-chart-line"></i>
-                                        <%= operation.activo || operation.instrument_id || 'N/A' %>
+                                        <img src="/img/EURUSD.svg"
+                                            alt="<%= operation.activo || operation.instrument_id || 'N/A' %>"
+                                            class="currency-icon" loading="eager"
+                                            onload="this.style.display='inline-block'; this.nextElementSibling.style.display='none'; console.log('SVG cargado exitosamente');"
+                                            onerror="console.log('Error cargando SVG:', this.src); this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                                        <i class="fas fa-chart-line"
+                                            style="display: none; color: #17a2b8; font-size: 18px;"></i>
+                                        <span>
+                                            <%= operation.activo || operation.instrument_id || 'N/A' %>
+                                        </span>
                                     </div>
                                     <div
                                         class="operation-result <%= 
@@ -1111,9 +1077,85 @@
                         <% } %>
                             <% } else { %>
                                 <div class="loading">
-                                    <i class="fas fa-info-circle"></i>
-                                    <div style="margin-top: 16px;">Cambia a cuenta REAL para ver operaciones reales
+                                    <i class="fas fa-spinner"></i>
+                                    <div style="margin-top: 16px;">Obteniendo operaciones reales...</div>
+                                </div>
+                                <% } %>
+        </div>
+
+        <!-- Practice Tab -->
+        <div class="tab-content" id="practice-content">
+            <% if (accountType==='PRACTICE' ) { %>
+                <% if (typeof historial !=='undefined' && historial && historial.length> 0) { %>
+                    <div class="operations-list">
+                        <% historial.forEach(function(operation) { %>
+                            <div class="operation-item">
+                                <div class="operation-header">
+                                    <div class="operation-asset">
+                                        <img src="/img/EURUSD.svg"
+                                            alt="<%= operation.activo || operation.instrument_id || 'N/A' %>"
+                                            class="currency-icon" loading="eager"
+                                            onload="this.style.display='inline-block'; this.nextElementSibling.style.display='none'; console.log('SVG cargado exitosamente');"
+                                            onerror="console.log('Error cargando SVG:', this.src); this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                                        <i class="fas fa-chart-line"
+                                            style="display: none; color: #ff8c00; font-size: 18px;"></i>
+                                        <span>
+                                            <%= operation.activo || operation.instrument_id || 'N/A' %>
+                                        </span>
                                     </div>
+                                    <div
+                                        class="operation-result <%= 
+                                            (operation.resultado === 'Ganado' || operation.result === 'win') ? 'win' : 
+                                            (operation.resultado === 'Empate' || operation.result === 'draw') ? 'draw' : 'loss' %>">
+                                        <%= (operation.resultado==='Ganado' || operation.result==='win' ) ? 'GANÓ' :
+                                            (operation.resultado==='Empate' || operation.result==='draw' ) ? 'EMPATE'
+                                            : 'PERDIÓ' %>
+                                    </div>
+                                </div>
+                                <div class="operation-details">
+                                    <div class="operation-detail">
+                                        <span><i class="fas fa-coins"></i> Inversión:</span>
+                                        <span>$<%= parseFloat(operation.inversion || operation.amount || 0).toFixed(2)
+                                                %>
+                                        </span>
+                                    </div>
+                                    <div class="operation-detail">
+                                        <span><i class="fas fa-trophy"></i> Ganancia:</span>
+                                        <span
+                                            class="<%= 
+                                                (operation.resultado === 'Ganado' || operation.result === 'win') ? 'profit' : 
+                                                (operation.resultado === 'Empate' || operation.result === 'draw') ? 'draw' : 'loss' %>">
+                                            $<%= parseFloat(operation.ganancia || operation.profit || 0).toFixed(2) %>
+                                        </span>
+                                    </div>
+                                    <div class="operation-detail">
+                                        <span><i class="fas fa-clock"></i> Hora:</span>
+                                        <span>
+                                            <%= operation.duracion || operation.hora_apertura || 'N/A' %>
+                                        </span>
+                                    </div>
+                                    <div class="operation-detail">
+                                        <span><i class="fas fa-calendar-alt"></i> Fecha:</span>
+                                        <span>
+                                            <%= operation.fecha_apertura || new Date(operation.created *
+                                                1000).toLocaleDateString('es-ES') %>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }); %>
+                    </div>
+                    <% } else { %>
+                        <div class="loading">
+                            <i class="fas fa-chart-bar"></i>
+                            <div style="margin-top: 16px;">No hay operaciones de PRÁCTICA disponibles en este período
+                            </div>
+                        </div>
+                        <% } %>
+                            <% } else { %>
+                                <div class="loading">
+                                    <i class="fas fa-spinner"></i>
+                                    <div style="margin-top: 16px;">Obteniendo operaciones de práctica...</div>
                                 </div>
                                 <% } %>
         </div>
@@ -1343,9 +1385,7 @@
 
         // Logout function
         function logout() {
-            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-                window.location.href = '/logout';
-            }
+            window.location.href = '/logout';
         }
 
         // Pagination functions - Enhanced for new design
@@ -1391,23 +1431,28 @@
         document.addEventListener('DOMContentLoaded', function () {
             const pageInput = document.getElementById('pageInput');
             if (pageInput) {
-                // Enter key navigation
+                // Enter key navigation ONLY
                 pageInput.addEventListener('keypress', function (e) {
                     if (e.key === 'Enter') {
+                        e.preventDefault(); // Prevent form submission
                         goToInputPage();
                     }
                 });
 
-                // Real-time validation
+                // Real-time validation (NO NAVIGATION)
                 pageInput.addEventListener('input', function (e) {
                     const value = parseInt(e.target.value);
                     const maxPages = TOTAL_PAGES;
 
+                    // Only validate range, DO NOT navigate
                     if (value < 1) {
                         e.target.value = 1;
                     } else if (value > maxPages) {
                         e.target.value = maxPages;
                     }
+
+                    // Explicitly prevent any accidental navigation
+                    e.stopPropagation();
                 });
             }
         });
@@ -1452,6 +1497,33 @@
                     window.location = url;
                 });
             }
+        });
+
+        // Función para obtener la imagen correcta de la divisa
+        function getCurrencyImage(assetName) {
+            // Limpiar el nombre del activo
+            const cleanAsset = (assetName || '').replace(/[^A-Za-z]/g, '').toUpperCase();
+
+            // Lista de pares disponibles (puedes expandir esta lista)
+            const availablePairs = ['EURUSD', 'GBPUSD', 'USDJPY', 'AUDUSD', 'USDCAD', 'NZDUSD', 'EURGBP', 'EURJPY'];
+
+            // Si el par está en la lista, usar su imagen específica
+            if (availablePairs.includes(cleanAsset)) {
+                return `/img/${cleanAsset}.svg`;
+            }
+
+            // Por defecto, usar EURUSD como fallback
+            return '/img/EURUSD.svg';
+        }
+
+        // Aplicar imágenes correctas cuando carga la página
+        document.addEventListener('DOMContentLoaded', function () {
+            const currencyIcons = document.querySelectorAll('.currency-icon');
+            currencyIcons.forEach(icon => {
+                const assetName = icon.alt;
+                const correctImage = getCurrencyImage(assetName);
+                icon.src = correctImage;
+            });
         });
     </script>
 </body>

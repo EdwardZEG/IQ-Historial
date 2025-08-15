@@ -4,12 +4,21 @@
   "description": "App web para historial de IQ Option",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "vercel-build": "echo 'Build complete'"
+  },
+  "engines": {
+    "node": ">=16"
   },
   "dependencies": {
     "express": "^4.18.2",
     "ejs": "^3.1.9",
     "axios": "^1.6.7",
-    "express-session": "^1.17.3"
+    "express-session": "^1.17.3",
+    "ws": "^8.14.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   }
 }
