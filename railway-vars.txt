@@ -1,0 +1,9 @@
+# Variables adicionales para Railway
+# Agregar estas en Railway Dashboard -> Variables
+
+PORT=3000
+PYTHON_PATH=python3
+
+# Opcional pero recomendadas:
+RAILWAY_ENVIRONMENT_NAME=production
+DEBUG_MODE=false

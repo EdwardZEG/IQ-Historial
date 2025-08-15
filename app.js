@@ -65,11 +65,31 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 
-// Exportar app para Vercel
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`🚀 Servidor iniciado en http://localhost:${PORT}`);
+// Configuración específica para diferentes plataformas
+const isVercel = process.env.VERCEL === '1';
+const isRailway = process.env.RAILWAY_ENVIRONMENT_NAME || process.env.RAILWAY_PROJECT_NAME;
+
+// Para Railway y desarrollo local, iniciar servidor normalmente
+if (!isVercel) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`� Configuración del sistema:`);
+    console.log(`- VERCEL: ${process.env.VERCEL === '1' ? '✅' : '❌'}`);
+    console.log(`- NODE_ENV: ${process.env.NODE_ENV || 'undefined'}`);
+    console.log(`- RAILWAY: ${isRailway ? '✅' : '❌'}`);
+    console.log(`- Python disponible: ✅`);
+    
+    if (isRailway) {
+      console.log(`- Método a usar: Python (real) en Railway`);
+    } else {
+      console.log(`- Método a usar: Python (real)`);
+    }
+    
+    console.log(`�🚀 Servidor iniciado en http://localhost:${PORT}`);
     console.log(`📱 Versión móvil: http://localhost:${PORT}/historial-mobile`);
+    
+    if (isRailway) {
+      console.log(`🚄 Railway deployment successful!`);
+    }
   });
 }
 
